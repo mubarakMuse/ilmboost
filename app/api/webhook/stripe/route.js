@@ -54,94 +54,120 @@ export async function POST(req) {
   try {
     switch (eventType) {
       case "checkout.session.completed": {
-        // First payment is successful and a subscription is created (if mode was set to "subscription" in ButtonCheckout)
-        // ✅ Grant access to the product
+        // First payment is successful and a subscription is created
+        // ✅ Grant access to the product and update membership
         const stripeObject = event.data.object;
 
-        const session = await findCheckoutSession(stripeObject.id);
+        let session;
+        try {
+          session = await findCheckoutSession(stripeObject.id);
+        } catch (error) {
+          console.error("Error fetching checkout session:", error);
+          // Try to continue with data from stripeObject
+          session = null;
+        }
 
-        const customerId = session?.customer;
-        const priceId = session?.line_items?.data[0]?.price.id;
-        const userId = stripeObject.client_reference_id;
+        const customerId = session?.customer || stripeObject.customer;
+        const priceId = session?.line_items?.data[0]?.price.id || stripeObject.display_items?.[0]?.price?.id;
+        const subscriptionId = session?.subscription || stripeObject.subscription;
+        const clientReferenceId = stripeObject.client_reference_id; // userId or email
+        
+        if (!priceId) {
+          console.error("No priceId found in session or stripeObject");
+          break;
+        }
+        
         const plan = configFile.stripe.plans.find((p) => p.priceId === priceId);
 
-        const customer = await stripe.customers.retrieve(customerId);
+        if (!plan) {
+          console.error("Plan not found for priceId:", priceId);
+          break;
+        }
 
-        if (!plan) break;
+        // Determine membership tier from plan
+        const membershipTier = plan.name === "Yearly" ? "yearly" : plan.name === "Monthly" ? "monthly" : "paid";
 
-        let user;
-        if (!userId) {
-          // check if user already exists
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("email", customer.email)
-            .single();
-          if (profile) {
-            user = profile;
-          } else {
-            // create a new user using supabase auth admin
-            const { data, error: authError } = await supabase.auth.admin.createUser({
-              email: customer.email,
-            });
-
-            if (authError) {
-              console.error("Failed to create auth user:", authError);
-              throw authError;
-            }
-
-            user = data?.user;            
-            if (user?.id) {
-              await new Promise(resolve => setTimeout(resolve, 100));
-              
-              const { data: existingProfile } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("id", user.id)
-                .single();
-              
-              if (existingProfile) {
-                user = existingProfile;
-              }
-            }
+        let customerEmail = stripeObject.customer_email;
+        if (customerId) {
+          try {
+            const customer = await stripe.customers.retrieve(customerId);
+            customerEmail = customer.email || customerEmail;
+          } catch (error) {
+            console.error("Error retrieving customer:", error);
+            // Continue with email from stripeObject
           }
-        } else {
-          // find user by ID
+        }
+
+        // Find user by ID (if clientReferenceId is UUID) or by email
+        let user = null;
+        
+        // Check if clientReferenceId is a UUID (userId)
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clientReferenceId);
+        
+        if (isUUID) {
+          // Find by user ID
           const { data: profile } = await supabase
             .from("profiles")
             .select("*")
-            .eq("id", userId)
+            .eq("id", clientReferenceId)
             .single();
-
+          user = profile;
+        } else {
+          // Find by email
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("email", clientReferenceId || customerEmail)
+            .single();
           user = profile;
         }
 
-        if (!user?.id) {
-          console.error("User ID is null, cannot create/update profile");
-          throw new Error("User ID is required for profile creation");
+        if (!user) {
+          console.error("User not found for:", clientReferenceId || customerEmail);
+          break;
         }
 
+        // Update user membership and Stripe info
+        // Only update Stripe fields if columns exist
+        const updateData = {
+          membership: membershipTier,
+          updated_at: new Date().toISOString()
+        };
+        
+        // Only add Stripe fields if they exist (check by trying to update)
+        // If columns don't exist, we'll update without them
+        if (customerId) updateData.stripe_customer_id = customerId;
+        if (priceId) updateData.stripe_price_id = priceId;
+        if (subscriptionId) updateData.stripe_subscription_id = subscriptionId;
+        
         const { error } = await supabase
           .from("profiles")
-          .upsert({
-            id: user.id,
-            email: customer.email,
-            customer_id: customerId,
-            price_id: priceId,
-            has_access: true,
-          });
+          .update(updateData)
+          .eq("id", user.id);
 
         if (error) {
-          console.error("Failed to upsert profile:", error);
-          throw error;
+          console.error("Failed to update profile:", error);
+          // If it's a column error, try updating without Stripe fields
+          if (error.code === 'PGRST204' || error.message?.includes('column')) {
+            console.log("Stripe columns may not exist, updating membership only");
+            const { error: membershipError } = await supabase
+              .from("profiles")
+              .update({
+                membership: membershipTier,
+                updated_at: new Date().toISOString()
+              })
+              .eq("id", user.id);
+            
+            if (membershipError) {
+              console.error("Failed to update membership:", membershipError);
+              throw membershipError;
+            }
+          } else {
+            throw error;
+          }
         }
 
-        // Extra: send email with user link, product page, etc...
-        // try {
-        //   await sendEmail(...);
-        // } catch (e) {
-        //   console.error("Email issue:" + e?.message);
-        // }
+        console.log(`Membership updated to ${membershipTier} for user ${user.id}`);
 
         break;
       }
@@ -161,7 +187,7 @@ export async function POST(req) {
 
       case "customer.subscription.deleted": {
         // The customer subscription stopped
-        // ❌ Revoke access to the product
+        // ❌ Revoke access - set membership back to free
         const stripeObject = event.data.object;
         const subscription = await stripe.subscriptions.retrieve(
           stripeObject.id
@@ -169,34 +195,52 @@ export async function POST(req) {
 
         await supabase
           .from("profiles")
-          .update({ has_access: false })
-          .eq("customer_id", subscription.customer);
+          .update({ 
+            membership: 'free',
+            stripe_subscription_id: null,
+            updated_at: new Date().toISOString()
+          })
+          .eq("stripe_customer_id", subscription.customer);
+        
+        console.log(`Subscription cancelled for customer ${subscription.customer}`);
         break;
       }
 
       case "invoice.paid": {
-        // Customer just paid an invoice (for instance, a recurring payment for a subscription)
-        // ✅ Grant access to the product
+        // Customer just paid an invoice (recurring payment for subscription)
+        // ✅ Ensure membership is still active
         const stripeObject = event.data.object;
         const priceId = stripeObject.lines.data[0].price.id;
         const customerId = stripeObject.customer;
 
-        // Find profile where customer_id equals the customerId (in table called 'profiles')
+        // Find profile by Stripe customer ID
         const { data: profile } = await supabase
           .from("profiles")
           .select("*")
-          .eq("customer_id", customerId)
+          .eq("stripe_customer_id", customerId)
           .single();
 
-        // Make sure the invoice is for the same plan (priceId) the user subscribed to
-        if (profile.price_id !== priceId) break;
+        if (!profile) {
+          console.error("Profile not found for customer:", customerId);
+          break;
+        }
 
-        // Grant the profile access to your product. It's a boolean in the database, but could be a number of credits, etc...
+        // Determine membership tier from priceId
+        const plan = configFile.stripe.plans.find((p) => p.priceId === priceId);
+        if (!plan) break;
+
+        const membershipTier = plan.name === "Yearly" ? "yearly" : plan.name === "Monthly" ? "monthly" : "paid";
+
+        // Update membership to ensure it's still active
         await supabase
           .from("profiles")
-          .update({ has_access: true })
-          .eq("customer_id", customerId);
+          .update({ 
+            membership: membershipTier,
+            updated_at: new Date().toISOString()
+          })
+          .eq("stripe_customer_id", customerId);
 
+        console.log(`Recurring payment processed for customer ${customerId}`);
         break;
       }
 

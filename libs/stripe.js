@@ -10,6 +10,10 @@ export const createCheckout = async ({
   clientReferenceId,
   user,
 }) => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("STRIPE_SECRET_KEY is not set in environment variables");
+  }
+
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   const extraParams = {};
@@ -57,6 +61,10 @@ export const createCheckout = async ({
 // This is used to create Customer Portal sessions, so users can manage their subscriptions (payment methods, cancel, etc..)
 export const createCustomerPortal = async ({ customerId, returnUrl }) => {
   try {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error("STRIPE_SECRET_KEY is not set in environment variables");
+    }
+
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const portalSession = await stripe.billingPortal.sessions.create({
@@ -74,6 +82,10 @@ export const createCustomerPortal = async ({ customerId, returnUrl }) => {
 // This is used to get the uesr checkout session and populate the data so we get the planId the user subscribed to
 export const findCheckoutSession = async (sessionId) => {
   try {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error("STRIPE_SECRET_KEY is not set in environment variables");
+    }
+
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
     const session = await stripe.checkout.sessions.retrieve(sessionId, {

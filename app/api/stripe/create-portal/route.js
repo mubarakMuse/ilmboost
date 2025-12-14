@@ -1,32 +1,42 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/libs/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 import { createCustomerPortal } from "@/libs/stripe";
 
 export async function POST(req) {
   try {
-    const supabase = await createClient();
-
-    const body = await req.json();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    // User who are not logged in can't make a purchase
-    if (!user) {
+    if (!process.env.STRIPE_SECRET_KEY) {
       return NextResponse.json(
-        { error: "You must be logged in to view billing information." },
-        { status: 401 }
+        { error: "Stripe is not configured" },
+        { status: 500 }
       );
     }
 
+    const body = await req.json();
+    const { userId } = body;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "User ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY,
+      {
+        auth: { persistSession: false },
+        realtime: { disabled: true }
+      }
+    );
+
     const { data: profile } = await supabase
       .from("profiles")
-      .select("*")
-      .eq("id", user?.id)
+      .select("stripe_customer_id")
+      .eq("id", userId)
       .single();
 
-    if (!profile?.customer_id) {
+    if (!profile?.stripe_customer_id) {
       return NextResponse.json(
         {
           error:
@@ -37,9 +47,16 @@ export async function POST(req) {
     }
 
     const stripePortalUrl = await createCustomerPortal({
-      customerId: profile.customer_id,
-      returnUrl: body.returnUrl,
+      customerId: profile.stripe_customer_id,
+      returnUrl: body.returnUrl || `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/account`,
     });
+
+    if (!stripePortalUrl) {
+      return NextResponse.json(
+        { error: "Failed to create portal session" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       url: stripePortalUrl,

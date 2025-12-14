@@ -57,39 +57,79 @@ const TOS = () => {
           className="leading-relaxed whitespace-pre-wrap"
           style={{ fontFamily: "sans-serif" }}
         >
-          {`Last Updated: September 26, 2023
+          {`Last Updated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
 
-Welcome to ShipFast!
+Welcome to Ilm Boost!
 
-These Terms of Service ("Terms") govern your use of the ShipFast website at https://shipfa.st ("Website") and the services provided by ShipFast. By using our Website and services, you agree to these Terms.
+These Terms of Service ("Terms") govern your use of the Ilm Boost website at https://ilmboost.com ("Website") and the services provided by Ilm Boost. By using our Website and services, you agree to these Terms.
 
-1. Description of ShipFast
+1. Description of Ilm Boost
 
-ShipFast is a platform that offers a JavaScript code boilerplate to assist entrepreneurs in launching their startups more efficiently.
+Ilm Boost is an online learning platform that provides comprehensive Islamic educational courses and content for Muslims worldwide. We offer courses covering various Islamic topics including Tafseer, Hadith, Fiqh, and other Islamic sciences.
 
-2. Ownership and Usage Rights
+2. Account Registration and Security
 
-When you purchase a package from ShipFast, you gain the right to download and use the code provided for creating applications. You own the code you create but do not have the right to resell it. We offer a full refund within 7 days of purchase, as specified in our refund policy.
+To access our courses, you must create an account with a valid email address, first name, last name, date of birth, phone number, and a 4-digit PIN. You are responsible for maintaining the confidentiality of your account credentials, including your PIN. You agree to notify us immediately of any unauthorized use of your account.
 
-3. User Data and Privacy
+3. Membership Tiers and Access
 
-We collect and store user data, including name, email, and payment information, as necessary to provide our services. For details on how we handle your data, please refer to our Privacy Policy at https://shipfa.st/privacy-policy.
+Ilm Boost offers three membership tiers:
+- Free: Basic access to limited course content
+- Monthly: Full access to all courses for $10/month, billed monthly
+- Yearly: Full access to all courses for $100/year, billed annually
 
-4. Non-Personal Data Collection
+Your membership tier determines your level of access to course content. Paid memberships are automatically renewed unless cancelled.
 
-We use web cookies to collect non-personal data for the purpose of improving our services and user experience.
+4. Course Enrollment and Progress
 
-5. Governing Law
+When you enroll in a course, you gain access to course materials, sections, quizzes, and assessments. Your progress, including completed sections and quiz scores, is tracked and stored in your account. You may retake quizzes to improve your scores.
 
-These Terms are governed by the laws of France.
+5. Payment and Refunds
 
-6. Updates to the Terms
+Payments for monthly and yearly memberships are processed securely through Stripe. All payments are non-refundable except as required by law. You may cancel your subscription at any time through your account settings or by contacting support. Cancellation will take effect at the end of your current billing period.
 
-We may update these Terms from time to time. Users will be notified of any changes via email.
+6. Intellectual Property
 
-For any questions or concerns regarding these Terms of Service, please contact us at marc@shipfa.st.
+All course content, including text, videos, images, quizzes, and other materials, is the property of Ilm Boost and is protected by copyright and other intellectual property laws. You may not reproduce, distribute, modify, or create derivative works from our content without express written permission.
 
-Thank you for using ShipFast!`}
+7. User Conduct
+
+You agree to use Ilm Boost in a manner that is respectful and in accordance with Islamic values. You may not:
+- Share your account credentials with others
+- Attempt to access courses or content you are not authorized to view
+- Use automated systems to access or scrape our content
+- Engage in any activity that disrupts or interferes with our services
+
+8. User Data and Privacy
+
+We collect and store user data, including name, email, phone number, date of birth, and payment information, as necessary to provide our services. For details on how we handle your data, please refer to our Privacy Policy at https://ilmboost.com/privacy-policy.
+
+9. Non-Personal Data Collection
+
+We use web cookies and similar technologies to collect non-personal data for the purpose of improving our services and user experience.
+
+10. Termination
+
+We reserve the right to suspend or terminate your account at any time if you violate these Terms or engage in any fraudulent, abusive, or illegal activity.
+
+11. Limitation of Liability
+
+Ilm Boost provides educational content for informational purposes. We do not guarantee specific outcomes or results from using our courses. We are not liable for any indirect, incidental, or consequential damages arising from your use of our services.
+
+12. Governing Law
+
+These Terms are governed by the laws of the jurisdiction in which Ilm Boost operates.
+
+13. Updates to the Terms
+
+We may update these Terms from time to time. Users will be notified of any significant changes via email or through notifications on the Website. Continued use of our services after changes constitutes acceptance of the updated Terms.
+
+14. Contact Information
+
+For any questions or concerns regarding these Terms of Service, please contact us at:
+Email: mubarak014@gmail.com
+
+Thank you for choosing Ilm Boost for your Islamic learning journey!`}
         </pre>
       </div>
     </main>

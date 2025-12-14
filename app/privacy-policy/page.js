@@ -57,9 +57,9 @@ const PrivacyPolicy = () => {
           className="leading-relaxed whitespace-pre-wrap"
           style={{ fontFamily: "sans-serif" }}
         >
-          {`Last Updated: 2023-08-25
+          {`Last Updated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
 
-Thank you for visiting ShipFast ("we," "us," or "our"). This Privacy Policy outlines how we collect, use, and protect your personal and non-personal information when you use our website located at https://shipfa.st (the "Website").
+Thank you for visiting Ilm Boost ("we," "us," or "our"). This Privacy Policy outlines how we collect, use, and protect your personal and non-personal information when you use our website located at https://ilmboost.com (the "Website").
 
 By accessing or using the Website, you agree to the terms of this Privacy Policy. If you do not agree with the practices described in this policy, please do not use the Website.
 
@@ -69,39 +69,90 @@ By accessing or using the Website, you agree to the terms of this Privacy Policy
 
 We collect the following personal information from you:
 
-Name: We collect your name to personalize your experience and communicate with you effectively.
-Email: We collect your email address to send you important information regarding your orders, updates, and communication.
-Payment Information: We collect payment details to process your orders securely. However, we do not store your payment information on our servers. Payments are processed by trusted third-party payment processors.
+Name: We collect your first name and last name to personalize your experience and communicate with you effectively.
+Email: We collect your email address to send you important information regarding your account, course updates, membership status, and communication.
+Phone Number: We collect your phone number for account verification and important notifications.
+Date of Birth: We collect your month and year of birth for account security and age verification purposes.
+PIN: We collect a 4-digit PIN that you create during registration. This PIN is securely hashed and stored. It is used for account authentication along with your email.
+Secret Answer: We collect a secret answer (your mother's birth year) for account recovery purposes. This information is securely hashed and stored.
+Payment Information: We collect payment details to process your membership subscriptions securely. However, we do not store your full payment information on our servers. Payments are processed by Stripe, a trusted third-party payment processor. We only store your Stripe customer ID, subscription ID, and price ID for membership management.
 
-1.2 Non-Personal Data
+1.2 Course Progress and Activity Data
 
-We may use web cookies and similar technologies to collect non-personal information such as your IP address, browser type, device information, and browsing patterns. This information helps us to enhance your browsing experience, analyze trends, and improve our services.
+We collect and store information about your course enrollment, progress, completed sections, quiz scores, and learning activity. This data helps us provide you with a personalized learning experience and track your educational journey.
+
+1.3 Non-Personal Data
+
+We may use web cookies, local storage, and similar technologies to collect non-personal information such as your IP address, browser type, device information, and browsing patterns. This information helps us to enhance your browsing experience, analyze trends, and improve our services.
 
 2. Purpose of Data Collection
 
-We collect and use your personal data for the sole purpose of order processing. This includes processing your orders, sending order confirmations, providing customer support, and keeping you updated about the status of your orders.
+We collect and use your personal data for the following purposes:
+- Account creation and authentication
+- Processing membership subscriptions and payments
+- Providing access to course content based on your membership tier
+- Tracking your course progress and quiz scores
+- Sending important account updates and course notifications
+- Providing customer support
+- Improving our services and user experience
+- Complying with legal obligations
 
-3. Data Sharing
+3. Data Storage and Security
 
-We do not share your personal data with any third parties except as required for order processing (e.g., sharing your information with payment processors). We do not sell, trade, or rent your personal information to others.
+Your personal data is stored securely in our database using industry-standard security measures. Your PIN and secret answer are hashed using secure cryptographic methods and cannot be retrieved in plain text. We use secure session management to protect your account while you are logged in.
 
-4. Children's Privacy
+4. Data Sharing
 
-ShipFast is not intended for children under the age of 13. We do not knowingly collect personal information from children. If you are a parent or guardian and believe that your child has provided us with personal information, please contact us at the email address provided below.
+We do not share your personal data with any third parties except:
+- Payment Processing: We share necessary payment information with Stripe to process your membership subscriptions.
+- Service Providers: We may share data with trusted service providers who assist us in operating our platform, such as hosting providers, but only to the extent necessary to provide our services.
 
-5. Updates to the Privacy Policy
+We do not sell, trade, or rent your personal information to others for marketing purposes.
 
-We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. Any updates will be posted on this page, and we may notify you via email about significant changes.
+5. Your Rights
 
-6. Contact Information
+You have the right to:
+- Access your personal data
+- Update or correct your personal information through your account settings
+- Request deletion of your account and associated data
+- Change your PIN through your account settings
+- Cancel your membership subscription at any time
 
-If you have any questions, concerns, or requests related to this Privacy Policy, you can contact us at:
+6. Cookies and Local Storage
 
-Email: marc@shipfa.st
+We use cookies and local storage to:
+- Maintain your login session
+- Remember your preferences
+- Track your course progress
+- Improve website functionality
 
-For all other inquiries, please visit our Contact Us page on the Website.
+You can control cookies through your browser settings, but disabling cookies may affect your ability to use certain features of our Website.
 
-By using ShipFast, you consent to the terms of this Privacy Policy.`}
+7. Children's Privacy
+
+Ilm Boost is intended for users who are at least 13 years of age. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe that your child has provided us with personal information, please contact us at the email address provided below.
+
+8. Data Retention
+
+We retain your personal data for as long as your account is active or as needed to provide you with our services. If you delete your account, we will delete or anonymize your personal data, except where we are required to retain it for legal or regulatory purposes.
+
+9. International Data Transfers
+
+Your data may be transferred to and stored on servers located outside your country of residence. By using our Website, you consent to the transfer of your data to these servers.
+
+10. Updates to the Privacy Policy
+
+We may update this Privacy Policy from time to time to reflect changes in our practices or for other operational, legal, or regulatory reasons. Any updates will be posted on this page with an updated "Last Updated" date, and we may notify you via email about significant changes.
+
+11. Contact Information
+
+If you have any questions, concerns, or requests related to this Privacy Policy, or if you wish to exercise your rights regarding your personal data, you can contact us at:
+
+Email: mubarak014@gmail.com
+
+For all other inquiries, please visit our support page on the Website.
+
+By using Ilm Boost, you consent to the terms of this Privacy Policy.`}
         </pre>
       </div>
     </main>

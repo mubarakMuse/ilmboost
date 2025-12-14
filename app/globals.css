@@ -4,7 +4,29 @@
 }
 
 @theme {
-  --font-display: "Satoshi", "sans-serif";
+  /* Custom Color Palette */
+  --color-bg-main: #FAF9F7;
+  --color-bg-sidebar: #F1EFEA;
+  --color-text-primary: #1C1C1C;
+  --color-text-secondary: #6B6B6B;
+  --color-accent-soft: #E8DFC9;
+  --color-accent-text: #4A463F;
+  
+  /* DaisyUI Theme Colors - mapped to custom palette */
+  --color-base-100: #FAF9F7;
+  --color-base-200: #F1EFEA;
+  --color-base-300: #E8DFC9;
+  --color-base-content: #1C1C1C;
+  --color-primary: #4A463F;
+  --color-primary-content: #FAF9F7;
+  --color-secondary: #6B6B6B;
+  --color-secondary-content: #FAF9F7;
+  --color-accent: #E8DFC9;
+  --color-accent-content: #4A463F;
+  
+  /* Fonts */
+  --font-display: "Canela", "Playfair Display", serif;
+  --font-body: "Inter", sans-serif;
   
   --animate-shimmer: shimmer 3s ease-out infinite alternate;
   --animate-opacity: opacity 0.25s ease-in-out;
@@ -46,6 +68,46 @@
 html,
 body {
   scroll-behavior: smooth !important;
+  background-color: #FAF9F7 !important;
+  color: #1C1C1C;
+}
+
+/* Ensure all main containers use the background color */
+main,
+#__next,
+[data-theme] {
+  background-color: #FAF9F7 !important;
+}
+
+/* Apply body font to all text */
+body {
+  font-family: "Inter", var(--font-body), sans-serif;
+}
+
+/* Apply display font to headings - Canela with Playfair Display fallback */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6,
+.title,
+.card-title {
+  font-family: "Canela", "Playfair Display", var(--font-display), serif;
+  color: #1C1C1C;
+  font-weight: 500;
+}
+
+/* Update DaisyUI base colors to match custom palette */
+[data-theme="light"] {
+  --p: 30 8% 28%; /* Primary color - accent-text #4A463F */
+  --pc: 0 0% 98%; /* Primary content */
+  --s: 0 0% 42%; /* Secondary color - text-secondary #6B6B6B */
+  --sc: 0 0% 98%; /* Secondary content */
+  --b1: 98% 97% 97%; /* Base 100 - main background #FAF9F7 */
+  --b2: 95% 93% 92%; /* Base 200 - sidebar background #F1EFEA */
+  --b3: 92% 88% 81%; /* Base 300 - accent soft #E8DFC9 */
+  --bc: 0 0% 11%; /* Base content - text primary #1C1C1C */
+  --n: 0 0% 42%; /* Neutral - text secondary #6B6B6B */
+  --nc: 0 0% 98%; /* Neutral content */
+  --a: 92% 88% 81%; /* Accent - accent soft #E8DFC9 */
+  --ac: 30 8% 28%; /* Accent content - accent-text #4A463F */
 }
 
 progress::-webkit-progress-value {

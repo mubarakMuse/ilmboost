@@ -1,18 +1,14 @@
-import { updateSession } from "@/libs/supabase/middleware";
+// Middleware disabled - using custom localStorage-based authentication
+// If you need middleware in the future, you can re-enable it here
 
 export async function middleware(request) {
-  return await updateSession(request);
+  // No middleware needed for custom auth system
+  return;
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // Disabled - no routes need middleware protection
+    // All auth is handled client-side with localStorage
   ],
 };

@@ -1,10 +1,20 @@
-import { Inter } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import { getSEOTags } from "@/libs/seo";
 import ClientLayout from "@/components/LayoutClient";
 import config from "@/config";
 import "./globals.css";
 
-const font = Inter({ subsets: ["latin"] });
+const inter = Inter({ 
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const playfairDisplay = Playfair_Display({ 
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const viewport = {
 	// Will use the primary color of your theme to show a nice theme color in the URL bar of supported browsers
@@ -22,9 +32,19 @@ export default function RootLayout({ children }) {
 		<html
 			lang="en"
 			data-theme={config.colors.theme}
-			className={font.className}
+			className={`${inter.variable} ${playfairDisplay.variable}`}
+			style={{ backgroundColor: "#FAF9F7" }}
 		>
-			<body>
+			<head>
+			<script
+  defer
+  data-website-id="dfid_nBZquasycwP61YwDNLjHj"
+  data-domain="ilmboost.com"
+  src="https://datafa.st/js/script.js">
+</script>
+			</head>
+
+			<body className={inter.className} style={{ backgroundColor: "#FAF9F7" }}>
 				{/* ClientLayout contains all the client wrappers (Crisp chat support, toast messages, tooltips, etc.) */}
 				<ClientLayout>{children}</ClientLayout>
 			</body>
