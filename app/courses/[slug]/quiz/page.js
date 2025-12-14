@@ -267,7 +267,7 @@ const CourseQuiz = () => {
           <div className="max-w-4xl mx-auto px-4 py-12">
             <div className="text-center py-12">
               <h1 className="text-2xl font-bold mb-4">No Quiz Available</h1>
-              <p className="text-base-content/70 mb-6">This course doesn't have any quiz questions yet.</p>
+              <p className="text-base-content/70 mb-6">This course doesn&apos;t have any quiz questions yet.</p>
               <Link href={`/courses/${slug}`} className="link link-hover text-sm">
                 ← Back to Course
               </Link>

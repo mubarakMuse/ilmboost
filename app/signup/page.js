@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { signup } from "@/libs/auth";
 
-export default function SignupPage() {
+function SignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
@@ -279,7 +279,7 @@ export default function SignupPage() {
 
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Mom's Birth Year *</span>
+                    <span className="label-text">Mom&apos;s Birth Year *</span>
                   </label>
                   <input
                     type="text"
@@ -379,6 +379,22 @@ export default function SignupPage() {
       </main>
       <Footer />
     </>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={
+      <>
+        <Header />
+        <main className="min-h-screen bg-base-100 flex items-center justify-center">
+          <span className="loading loading-spinner loading-lg"></span>
+        </main>
+        <Footer />
+      </>
+    }>
+      <SignupContent />
+    </Suspense>
   );
 }
 

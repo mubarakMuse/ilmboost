@@ -631,7 +631,7 @@ export default function AccountPage() {
                 <div className="card-body">
                   <h3 className="font-semibold text-xl mb-2">Logout</h3>
                   <p className="text-sm text-base-content/70 mb-4">
-                    Sign out of your account. You'll need to log in again to access your courses.
+                    Sign out of your account. You&apos;ll need to log in again to access your courses.
                   </p>
                   <button onClick={handleLogout} className="btn btn-outline btn-error">
                     Logout

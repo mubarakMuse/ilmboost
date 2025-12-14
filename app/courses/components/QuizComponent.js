@@ -139,7 +139,7 @@ const QuizComponent = ({ quiz, sectionNumber, questionNumber, totalQuestions }) 
         {eliminated.length > 0 && !showResult && (
           <div className="alert alert-warning mb-4">
             <span>✗</span>
-            <span>That's not correct. Try another option.</span>
+            <span>That&apos;s not correct. Try another option.</span>
           </div>
         )}
 

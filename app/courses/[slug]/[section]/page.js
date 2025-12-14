@@ -147,7 +147,7 @@ const SectionPage = () => {
             {content.text}
           </h3>
         );
-      case "paragraph":
+      case "paragraph": {
         // Handle markdown bold (**text**) and italic (*text*)
         const processMarkdown = (text) => {
           if (!text) return '';
@@ -161,6 +161,7 @@ const SectionPage = () => {
             dangerouslySetInnerHTML={{ __html: processMarkdown(content.text) }}
           />
         );
+      }
       case "list":
         return (
           <ul className="list-disc list-inside space-y-2 mb-4 text-base-content/90">
@@ -179,7 +180,7 @@ const SectionPage = () => {
             {content.text}
           </blockquote>
         );
-      case "video":
+      case "video": {
         const youtubeEmbed = getYouTubeEmbedUrl(content.src);
         if (youtubeEmbed) {
           return (
@@ -212,7 +213,8 @@ const SectionPage = () => {
             </a>
           </div>
         );
-      case "loom video":
+      }
+      case "loom video": {
         const loomEmbed = getLoomEmbedUrl(content.src);
         if (loomEmbed) {
           return (
@@ -245,6 +247,7 @@ const SectionPage = () => {
             </a>
           </div>
         );
+      }
       default:
         return null;
     }

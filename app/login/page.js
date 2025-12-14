@@ -209,7 +209,7 @@ export default function LoginPage() {
                   </button>
 
                   <p className="text-center text-sm">
-                    Don't have an account?{' '}
+                    Don&apos;t have an account?{' '}
                     <Link href="/signup" className="link link-primary">
                       Sign Up
                     </Link>
@@ -251,7 +251,7 @@ export default function LoginPage() {
 
                     <div className="form-control">
                       <label className="label">
-                        <span className="label-text">Mom's Birth Year</span>
+                        <span className="label-text">Mom&apos;s Birth Year</span>
                       </label>
                       <input
                         type="text"

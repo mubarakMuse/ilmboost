@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -9,7 +9,7 @@ import { hasActiveSession, getUser } from "@/libs/auth";
 import config from "@/config";
 import apiClient from "@/libs/api";
 
-export default function MembershipPage() {
+function MembershipContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [user, setUser] = useState(null);
@@ -257,6 +257,22 @@ export default function MembershipPage() {
       </main>
       <Footer />
     </>
+  );
+}
+
+export default function MembershipPage() {
+  return (
+    <Suspense fallback={
+      <>
+        <Header />
+        <main className="min-h-screen bg-base-100 flex items-center justify-center">
+          <span className="loading loading-spinner loading-lg"></span>
+        </main>
+        <Footer />
+      </>
+    }>
+      <MembershipContent />
+    </Suspense>
   );
 }
 
