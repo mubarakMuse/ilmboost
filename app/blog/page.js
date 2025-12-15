@@ -5,9 +5,9 @@ import config from "@/config";
 import { getSEOTags } from "@/libs/seo";
 
 export const metadata = getSEOTags({
-  title: `${config.appName} Blog | Stripe Chargeback Protection`,
+  title: `${config.appName} Blog | Islamic Studies & Learning`,
   description:
-    "Learn how to prevent chargebacks, how to accept payments online, and keep your Stripe account in good standing",
+    "Explore articles on Islamic studies, faith, spirituality, and learning resources to deepen your understanding of Islam.",
   canonicalUrlRelative: "/blog",
 });
 
@@ -22,8 +22,7 @@ export default async function Blog() {
           The {config.appName} Blog
         </h1>
         <p className="text-lg opacity-80 leading-relaxed">
-          Learn how to ship your startup in days, not weeks. And get the latest
-          updates about the boilerplate
+          Explore articles on Islamic studies, faith, and learning resources to deepen your understanding and strengthen your connection with Islam.
         </p>
       </section>
 

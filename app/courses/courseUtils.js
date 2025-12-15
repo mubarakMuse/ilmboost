@@ -29,6 +29,28 @@ export function getCourseById(courseID) {
 }
 
 /**
+ * Check if a course is premium (requires license)
+ * @param {string|Object} courseIdOrCourse - Course ID or course object
+ * @returns {boolean} True if course is premium
+ */
+export function isPremiumCourse(courseIdOrCourse) {
+  let course = null;
+  
+  if (typeof courseIdOrCourse === 'string') {
+    // If it's a course ID, find the course
+    course = getCourseById(courseIdOrCourse);
+  } else {
+    // If it's a course object, use it directly
+    course = courseIdOrCourse;
+  }
+  
+  if (!course) return false;
+  
+  // Check if course has premium field (add this to courses.json for premium courses)
+  return course.premium === true;
+}
+
+/**
  * Convert course image path to public URL
  * @param {string} imagePath - The image path from JSON
  * @returns {string} The public URL path

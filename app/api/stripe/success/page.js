@@ -9,7 +9,7 @@ function StripeSuccessContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState("processing");
   const userId = searchParams.get("userId");
-  const membership = searchParams.get("membership") || "paid";
+  const licenseType = searchParams.get("licenseType"); // For license purchases
   const sessionId = searchParams.get("session_id");
 
   useEffect(() => {
@@ -21,7 +21,7 @@ function StripeSuccessContent() {
     // Verify payment and refresh user data
     const verifyPayment = async () => {
       try {
-        console.log("Verifying payment:", { userId, sessionId, membership });
+        console.log("Verifying payment:", { userId, sessionId, licenseType });
         
         // Verify session with Stripe
         const response = await fetch("/api/stripe/verify-session", {
@@ -32,6 +32,7 @@ function StripeSuccessContent() {
           body: JSON.stringify({
             userId,
             sessionId,
+            licenseType, // Pass license type if this is a license purchase
           }),
         });
 
@@ -96,7 +97,7 @@ function StripeSuccessContent() {
     };
 
     verifyPayment();
-  }, [userId, sessionId, membership, router]);
+  }, [userId, sessionId, licenseType, router]);
 
   if (status === "processing") {
     return (
@@ -148,7 +149,7 @@ function StripeSuccessContent() {
           <div className="text-6xl mb-4">✓</div>
           <h2 className="card-title text-success justify-center">Payment Successful!</h2>
           <p className="text-base-content/70">
-            Your premium membership has been activated. Redirecting to dashboard...
+            {licenseType ? 'Your license has been activated.' : 'Your premium membership has been activated.'} Redirecting to dashboard...
           </p>
         </div>
       </div>

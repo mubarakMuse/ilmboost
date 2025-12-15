@@ -6,7 +6,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { hasActiveSession, getUser, isEnrolled, enrollInCourse, unenrollFromCourse, getCourseProgress, getCourseProgressPercentage } from "@/libs/auth";
-import { getAllCourses, getCourseImageUrl } from "../courses/courseUtils";
+import { getAllCourses, getCourseImageUrl, isPremiumCourse } from "../courses/courseUtils";
 import CourseImage from "../courses/components/CourseImage";
 
 export default function DashboardPage() {
@@ -154,7 +154,14 @@ export default function DashboardPage() {
                           />
                         </div>
                       )}
-                      <h3 className="card-title text-lg">{course.courseTitle}</h3>
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <h3 className="card-title text-lg flex-1">{course.courseTitle}</h3>
+                        {isPremiumCourse(course) ? (
+                          <span className="badge badge-sm bg-[#F5E6D3] text-black border-0">Premium</span>
+                        ) : (
+                          <span className="badge badge-sm bg-gray-200 text-gray-700 border-0">Free</span>
+                        )}
+                      </div>
                       <p className="text-sm text-base-content/70 line-clamp-2 mb-4">
                         {course.courseDescription}
                       </p>
@@ -176,9 +183,7 @@ export default function DashboardPage() {
                         </div>
                       )}
 
-                      {!isAvailable && (
-                        <div className="badge badge-warning mb-4">Coming Soon</div>
-                      )}
+                    
 
                       <div className="flex gap-2">
                         {enrolled ? (

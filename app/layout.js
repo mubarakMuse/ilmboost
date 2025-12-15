@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
 			lang="en"
 			data-theme={config.colors.theme}
 			className={`${inter.variable} ${playfairDisplay.variable}`}
-			style={{ backgroundColor: "#FAF9F7" }}
+			style={{ backgroundColor: "#FAFAFA" }}
 		>
 			<head>
 			<script
@@ -44,7 +44,7 @@ export default function RootLayout({ children }) {
 </script>
 			</head>
 
-			<body className={inter.className} style={{ backgroundColor: "#FAF9F7" }}>
+			<body className={inter.className} style={{ backgroundColor: "#FAFAFA" }}>
 				{/* ClientLayout contains all the client wrappers (Crisp chat support, toast messages, tooltips, etc.) */}
 				<ClientLayout>{children}</ClientLayout>
 			</body>

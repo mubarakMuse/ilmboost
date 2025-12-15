@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { hasActiveSession, getUser, logout, updatePin, updateProfile, getUserMembership } from "@/libs/auth";
+import { hasActiveSession, getUser, logout, updatePin, updateProfile, getUserMembership, hasActiveLicense } from "@/libs/auth";
 import apiClient from "@/libs/api";
 import config from "@/config";
 
@@ -34,9 +34,18 @@ export default function AccountPage() {
   const [profileError, setProfileError] = useState("");
   const [profileSuccess, setProfileSuccess] = useState("");
   
-  // Membership upgrade
-  const [isUpgrading, setIsUpgrading] = useState(false);
-  const [isOpeningPortal, setIsOpeningPortal] = useState(false);
+  // License status
+  const [license, setLicense] = useState(null);
+  const [hasLicense, setHasLicense] = useState(false);
+  const [isCheckingLicense, setIsCheckingLicense] = useState(true);
+  const [isLicenseOwner, setIsLicenseOwner] = useState(false);
+  const [licenseUsers, setLicenseUsers] = useState([]);
+  
+  // License activation
+  const [licenseKey, setLicenseKey] = useState("");
+  const [isActivating, setIsActivating] = useState(false);
+  const [activationError, setActivationError] = useState("");
+  const [activationSuccess, setActivationSuccess] = useState("");
 
   useEffect(() => {
     let hasRedirected = false;
@@ -63,7 +72,51 @@ export default function AccountPage() {
         dobMonth: userData.dobMonth || "",
         dobYear: userData.dobYear || ""
       });
+      
+      // Check license status
+      if (userData?.id) {
+        checkLicenseStatus(userData.id);
+      } else {
+        setIsCheckingLicense(false);
+      }
+      
       setIsLoading(false);
+    };
+    
+    const checkLicenseStatus = async (userId) => {
+      try {
+        const response = await fetch(`/api/licenses/check?userId=${userId}`);
+        const data = await response.json();
+        if (data.success) {
+          setHasLicense(data.hasLicense);
+          setLicense(data.license);
+          
+          // Check if user is the license owner
+          if (data.license && data.license.user_id === userId) {
+            setIsLicenseOwner(true);
+            // Load license users if owner
+            loadLicenseUsers(data.license.id, userId);
+          } else {
+            setIsLicenseOwner(false);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking license:', error);
+      } finally {
+        setIsCheckingLicense(false);
+      }
+    };
+    
+    const loadLicenseUsers = async (licenseId, userId) => {
+      try {
+        const response = await fetch(`/api/licenses/users?licenseId=${licenseId}&userId=${userId}`);
+        const data = await response.json();
+        if (data.success) {
+          setLicenseUsers(data.users || []);
+        }
+      } catch (error) {
+        console.error('Error loading license users:', error);
+      }
     };
 
     const timer = setTimeout(checkSession, 100);
@@ -207,14 +260,154 @@ export default function AccountPage() {
     );
   }
 
-  const membership = getUserMembership();
-  const isPaid = membership === 'paid' || membership === 'monthly' || membership === 'yearly';
+  const getLicenseDisplayName = () => {
+    if (!license) return 'No License';
+    const type = license.license_type || license.licenseType;
+    if (type === 'single') return 'Single User License';
+    if (type === 'family') return 'Family/Group License';
+    if (type === 'organization') return 'Organization License';
+    return 'Active License';
+  };
   
-  const getMembershipDisplayName = () => {
-    if (membership === 'monthly') return 'Monthly';
-    if (membership === 'yearly') return 'Yearly';
-    if (membership === 'paid') return 'Paid';
-    return 'Free';
+  const getLicenseExpiry = () => {
+    if (!license) return null;
+    const expiresAt = license.expires_at || license.expiresAt;
+    if (!expiresAt) return 'Active (Annual Subscription)';
+    const expiryDate = new Date(expiresAt);
+    const now = new Date();
+    if (expiryDate < now) {
+      return `Expired: ${expiryDate.toLocaleDateString()}`;
+    }
+    return expiryDate.toLocaleDateString();
+  };
+  
+  const refreshLicenseStatus = async () => {
+    if (!user?.id) return;
+    
+    setIsCheckingLicense(true);
+    try {
+      const checkResponse = await fetch(`/api/licenses/check?userId=${user.id}`);
+      const checkData = await checkResponse.json();
+      
+      if (checkData.success) {
+        setHasLicense(checkData.hasLicense);
+        setLicense(checkData.license);
+        
+        // Check if user is the license owner
+        if (checkData.license && checkData.license.user_id === user.id) {
+          setIsLicenseOwner(true);
+          // Load license users if owner
+          if (checkData.license.id) {
+            const usersResponse = await fetch(`/api/licenses/users?licenseId=${checkData.license.id}&userId=${user.id}`);
+            const usersData = await usersResponse.json();
+            if (usersData.success) {
+              setLicenseUsers(usersData.users || []);
+            }
+          }
+        } else {
+          setIsLicenseOwner(false);
+          setLicenseUsers([]);
+        }
+      }
+    } catch (error) {
+      console.error('Error refreshing license status:', error);
+    } finally {
+      setIsCheckingLicense(false);
+    }
+  };
+
+  const handleActivateLicense = async (e) => {
+    e.preventDefault();
+    setActivationError("");
+    setActivationSuccess("");
+    
+    if (!licenseKey.trim()) {
+      setActivationError("Please enter a license key");
+      return;
+    }
+    
+    if (!user?.id) {
+      setActivationError("User not found");
+      return;
+    }
+    
+    setIsActivating(true);
+    try {
+      const response = await fetch('/api/licenses/activate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          licenseKey: licenseKey.trim()
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setActivationSuccess("License activated successfully!");
+        setLicenseKey("");
+        
+        // Reload license status
+        await refreshLicenseStatus();
+      } else {
+        // Even if activation failed (e.g., already activated), refresh to show current status
+        if (data.error && data.error.includes("already")) {
+          setActivationSuccess("License is already active on your account!");
+          setLicenseKey("");
+          await refreshLicenseStatus();
+        } else {
+          setActivationError(data.error || "Failed to activate license");
+        }
+      }
+    } catch (error) {
+      console.error('Error activating license:', error);
+      setActivationError("Failed to activate license. Please try again.");
+    } finally {
+      setIsActivating(false);
+    }
+  };
+  
+  const handleLeaveLicense = async () => {
+    if (!user?.id || !license?.id) return;
+    
+    if (!confirm("Are you sure you want to leave this license? You will lose access to premium courses.")) {
+      return;
+    }
+    
+    try {
+      const response = await fetch('/api/licenses/leave', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          licenseId: license.id
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Reload license status
+        const checkResponse = await fetch(`/api/licenses/check?userId=${user.id}`);
+        const checkData = await checkResponse.json();
+        if (checkData.success) {
+          setHasLicense(checkData.hasLicense);
+          setLicense(checkData.license);
+          setIsLicenseOwner(false);
+        }
+        alert("Successfully left license");
+      } else {
+        alert(data.error || "Failed to leave license");
+      }
+    } catch (error) {
+      console.error('Error leaving license:', error);
+      alert("Failed to leave license. Please try again.");
+    }
   };
 
   return (
@@ -227,7 +420,7 @@ export default function AccountPage() {
               <div>
                 <h1 className="text-4xl font-bold mb-2">Account Settings</h1>
                 <p className="text-base-content/70">
-                  Manage your account and membership
+                  Manage your account and license
                 </p>
               </div>
               <Link href="/dashboard" className="btn btn-outline">
@@ -248,7 +441,7 @@ export default function AccountPage() {
               className={`tab ${activeTab === "membership" ? "tab-active" : ""}`}
               onClick={() => setActiveTab("membership")}
             >
-              Membership
+              License
             </button>
             <button
               className={`tab ${activeTab === "security" ? "tab-active" : ""}`}
@@ -283,21 +476,36 @@ export default function AccountPage() {
 
                     <div className="bg-base-200 rounded-lg p-4">
                       <label className="label pb-2">
-                        <span className="label-text font-semibold text-lg">Membership Status</span>
+                        <span className="label-text font-semibold text-lg">License Status</span>
                       </label>
-                      <div className="flex items-center gap-3">
-                        <span className={`badge badge-lg ${isPaid ? 'badge-success' : 'badge-info'}`}>
-                          {getMembershipDisplayName()}
-                        </span>
-                        {isPaid && getCurrentPlanPrice() && (
-                          <span className="text-base-content/70 font-medium">
-                            {getCurrentPlanPrice()}
-                          </span>
-                        )}
-                        {!isPaid && (
-                          <Link href="#membership" onClick={() => setActiveTab("membership")} className="link link-primary font-medium">
-                            Upgrade now →
-                          </Link>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        {isCheckingLicense ? (
+                          <span className="loading loading-spinner loading-sm"></span>
+                        ) : hasLicense ? (
+                          <>
+                            <span className="badge badge-lg badge-success">
+                              {getLicenseDisplayName()}
+                            </span>
+                            {getLicenseExpiry() && (
+                              <span className="text-base-content/70 font-medium">
+                                Expires: {getLicenseExpiry()}
+                              </span>
+                            )}
+                            {license?.license_key && (
+                              <span className="text-xs text-base-content/60 font-mono">
+                                {license.license_key}
+                              </span>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <span className="badge badge-lg badge-info">
+                              No Active License
+                            </span>
+                            <Link href="/membership" className="link link-primary font-medium">
+                              Activate or purchase a License →
+                            </Link>
+                          </>
                         )}
                       </div>
                     </div>
@@ -408,100 +616,190 @@ export default function AccountPage() {
             </div>
           )}
 
-          {/* Membership Tab */}
+          {/* License Tab */}
           {activeTab === "membership" && (
             <div className="space-y-6">
-              {/* Current Membership Card */}
+              {/* Current License Card */}
               <div className="card card-border bg-base-100 shadow-lg">
                 <div className="card-body">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="card-title text-2xl">Current Membership</h2>
-                    <span className={`badge badge-lg ${isPaid ? 'badge-success' : 'badge-info'}`}>
-                      {getMembershipDisplayName()}
-                    </span>
+                    <h2 className="card-title text-2xl">Current License</h2>
+                    {isCheckingLicense ? (
+                      <span className="loading loading-spinner loading-sm"></span>
+                    ) : hasLicense ? (
+                      <span className="badge badge-lg badge-success">
+                        {getLicenseDisplayName()}
+                      </span>
+                    ) : (
+                      <span className="badge badge-lg badge-info">
+                        No Active License
+                      </span>
+                    )}
                   </div>
                   
-                  {isPaid ? (
+                  {hasLicense && license ? (
                     <div className="space-y-4">
                       <div className="bg-base-200 rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="font-semibold text-lg">Pricing</span>
-                          <span className="text-2xl font-bold text-primary">
-                            {getCurrentPlanPrice()}
-                          </span>
-                        </div>
-                        <p className="text-sm text-base-content/70">
-                          {membership === 'monthly' 
-                            ? 'Billed monthly. Cancel anytime.'
-                            : 'Billed annually. Cancel anytime.'}
-                        </p>
-                      </div>
-                      
-                      <div className="divider"></div>
-                      
-                      <div>
-                        <h3 className="font-semibold mb-2">Subscription Management</h3>
-                        <p className="text-sm text-base-content/70 mb-4">
-                          Manage your subscription, update payment methods, or cancel your membership.
-                        </p>
-                        <button
-                          onClick={handleManageSubscription}
-                          className="btn btn-outline btn-primary"
-                          disabled={isOpeningPortal}
-                        >
-                          {isOpeningPortal ? (
-                            <>
-                              <span className="loading loading-spinner loading-xs"></span>
-                              Opening...
-                            </>
-                          ) : (
-                            <>
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              </svg>
-                              Manage Subscription
-                            </>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="font-semibold">License Type</span>
+                            <span className="text-lg">{getLicenseDisplayName()}</span>
+                          </div>
+                          {license.max_users && (
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold">Max Users</span>
+                              <span className="text-lg">{license.max_users}</span>
+                            </div>
                           )}
-                        </button>
+                          <div className="flex items-center justify-between">
+                            <span className="font-semibold">Status</span>
+                            <span className={`text-lg ${isLicenseOwner ? 'text-primary' : 'text-base-content/70'}`}>
+                              {isLicenseOwner ? 'Owner' : 'Member'}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="font-semibold">Expires</span>
+                            <span className="text-lg">{getLicenseExpiry()}</span>
+                          </div>
+                          {license.license_key && (
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold">License Key</span>
+                              <span className="text-sm font-mono">{license.license_key}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
+                      
+                      {/* License Management for Owner */}
+                      {isLicenseOwner && (
+                        <div className="bg-base-200 rounded-lg p-4">
+                          <h3 className="font-semibold mb-3">License Management</h3>
+                          <div className="space-y-2 mb-4">
+                            <div className="flex items-center justify-between text-sm">
+                              <span>Total Users:</span>
+                              <span className="font-semibold">{licenseUsers.length + 1} / {license.max_users || 'Unlimited'}</span>
+                            </div>
+                            {license.license_key && (
+                              <div className="bg-base-100 rounded p-3">
+                                <label className="label py-1">
+                                  <span className="label-text text-xs">Share this license key:</span>
+                                </label>
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="text"
+                                    value={license.license_key}
+                                    readOnly
+                                    className="input input-bordered input-sm flex-1 font-mono text-xs"
+                                  />
+                                  <button
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(license.license_key);
+                                      alert('License key copied to clipboard!');
+                                    }}
+                                    className="btn btn-sm btn-outline"
+                                  >
+                                    Copy
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          {licenseUsers.length > 0 && (
+                            <div className="mt-4">
+                              <h4 className="font-semibold text-sm mb-2">License Members:</h4>
+                              <div className="space-y-2">
+                                {licenseUsers.map((lu) => (
+                                  <div key={lu.id} className="flex items-center justify-between bg-base-100 rounded p-2 text-sm">
+                                    <span>{lu.profiles?.first_name} {lu.profiles?.last_name} ({lu.profiles?.email})</span>
+                                    <span className="text-xs text-base-content/60">
+                                      Added {new Date(lu.added_at).toLocaleDateString()}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          <div className="mt-4 pt-4 border-t border-base-300">
+                            <p className="text-xs text-base-content/60 mb-2">
+                              To cancel your subscription, use the Stripe Customer Portal.
+                            </p>
+                            <Link href="/account" className="btn btn-sm btn-outline">
+                              Manage Subscription
+                            </Link>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Leave License for Members */}
+                      {!isLicenseOwner && (
+                        <div className="bg-base-200 rounded-lg p-4">
+                          <p className="text-sm text-base-content/70 mb-3">
+                            You are using a shared license. You can leave at any time.
+                          </p>
+                          <button
+                            onClick={handleLeaveLicense}
+                            className="btn btn-sm btn-outline btn-error"
+                          >
+                            Leave License
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="space-y-4">
+                      {/* Purchase License */}
                       <div className="bg-base-200 rounded-lg p-4">
-                        <p className="text-base-content/70 mb-4">
-                          Upgrade to paid membership for full access to all courses and features.
+                        <h3 className="font-semibold mb-2">Purchase a License</h3>
+                        <p className="text-base-content/70 mb-4 text-sm">
+                          Purchase a license to activate your account and access all premium courses.
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-3">
-                          <button
-                            onClick={() => handleUpgradeMembership('monthly')}
-                            className="btn btn-primary flex-1"
-                            disabled={isUpgrading}
-                          >
-                            {isUpgrading ? (
-                              <>
-                                <span className="loading loading-spinner loading-xs"></span>
-                                Processing...
-                              </>
-                            ) : (
-                              `Upgrade to Monthly - $${config.stripe.plans.find(p => p.name === 'Monthly')?.price || 10}/mo`
-                            )}
-                          </button>
-                          <button
-                            onClick={() => handleUpgradeMembership('yearly')}
-                            className="btn btn-outline btn-primary flex-1"
-                            disabled={isUpgrading}
-                          >
-                            {isUpgrading ? (
-                              <>
-                                <span className="loading loading-spinner loading-xs"></span>
-                                Processing...
-                              </>
-                            ) : (
-                              `Upgrade to Yearly - $${config.stripe.plans.find(p => p.name === 'Yearly')?.price || 100}/yr`
-                            )}
-                          </button>
-                        </div>
+                        <Link href="/membership" className="btn btn-primary w-full">
+                          Purchase License
+                        </Link>
+                      </div>
+                      
+                      {/* Activate Existing License */}
+                      <div className="bg-base-200 rounded-lg p-4">
+                        <h3 className="font-semibold mb-2">Activate License Key</h3>
+                        <p className="text-base-content/70 mb-4 text-sm">
+                          Have a license key? Enter it below to activate your account.
+                        </p>
+                        <form onSubmit={handleActivateLicense}>
+                          {activationError && (
+                            <div className="alert alert-error mb-3 py-2">
+                              <span className="text-sm">{activationError}</span>
+                            </div>
+                          )}
+                          {activationSuccess && (
+                            <div className="alert alert-success mb-3 py-2">
+                              <span className="text-sm">{activationSuccess}</span>
+                            </div>
+                          )}
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={licenseKey}
+                              onChange={(e) => setLicenseKey(e.target.value.toUpperCase())}
+                              placeholder="ILM-XXXX-XXXX-XXXX"
+                              className="input input-bordered flex-1 font-mono"
+                              maxLength={20}
+                            />
+                            <button
+                              type="submit"
+                              className="btn btn-primary"
+                              disabled={isActivating}
+                            >
+                              {isActivating ? (
+                                <>
+                                  <span className="loading loading-spinner loading-xs"></span>
+                                  Activating...
+                                </>
+                              ) : (
+                                'Activate'
+                              )}
+                            </button>
+                          </div>
+                        </form>
                       </div>
                     </div>
                   )}
@@ -511,7 +809,7 @@ export default function AccountPage() {
               {/* Features Card */}
               <div className="card card-border bg-base-100">
                 <div className="card-body">
-                  <h3 className="card-title mb-4">Membership Benefits</h3>
+                  <h3 className="card-title mb-4">License Benefits</h3>
                   <ul className="space-y-2">
                     <li className="flex items-center gap-2">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">

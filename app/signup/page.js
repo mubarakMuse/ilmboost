@@ -19,17 +19,8 @@ function SignupContent() {
     dobYear: '',
     pin: '',
     confirmPin: '',
-    secretAnswer: '', // Mom's birth year
-    membership: 'free' // Selected membership tier
+    secretAnswer: '' // Mom's birth year
   });
-
-  useEffect(() => {
-    // Check if there's a membership plan in URL
-    const membership = searchParams.get('membership');
-    if (membership && (membership === 'free' || membership === 'monthly' || membership === 'yearly')) {
-      setFormData(prev => ({ ...prev, membership }));
-    }
-  }, [searchParams]);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -79,7 +70,7 @@ function SignupContent() {
     }
 
     try {
-      // Signup - await the async function
+      // Signup - await the async function (always free, license purchased separately)
       const result = await signup({
         email: formData.email,
         firstName: formData.firstName,
@@ -89,23 +80,14 @@ function SignupContent() {
         dobYear: formData.dobYear,
         pin: formData.pin,
         secretAnswer: formData.secretAnswer,
-        membership: formData.membership
+        membership: 'free' // Always free on signup, license purchased separately
       });
 
       if (result.success) {
-        // If user selected paid membership, redirect to checkout
-        if (formData.membership === 'monthly' || formData.membership === 'yearly') {
-          // Redirect to checkout with selected plan
-          setTimeout(() => {
-            router.push(`/membership?plan=${formData.membership}`);
-          }, 100);
-        } else {
-          // Free membership - go to dashboard
-          setTimeout(() => {
-            router.push('/dashboard');
-            router.refresh(); // Refresh to ensure state is updated
-          }, 100);
-        }
+        // Redirect to license page to purchase a license
+        setTimeout(() => {
+          router.push('/membership');
+        }, 100);
       } else {
         setError(result.error || 'Signup failed. Please try again.');
         setIsLoading(false);
@@ -303,62 +285,10 @@ function SignupContent() {
                   </label>
                 </div>
 
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text font-semibold">Choose Membership Plan *</span>
-                  </label>
-                  <div className="space-y-2">
-                    <label className="label cursor-pointer justify-start gap-3 border rounded-lg p-4 hover:bg-base-200">
-                      <input
-                        type="radio"
-                        name="membership"
-                        value="free"
-                        checked={formData.membership === 'free'}
-                        onChange={handleChange}
-                        className="radio radio-primary"
-                      />
-                      <div className="flex-1">
-                        <span className="label-text font-semibold">Free</span>
-                        <p className="text-xs text-base-content/70">Basic access to courses</p>
-                      </div>
-                      <span className="text-lg font-bold">$0</span>
-                    </label>
-                    
-                    <label className="label cursor-pointer justify-start gap-3 border rounded-lg p-4 hover:bg-base-200">
-                      <input
-                        type="radio"
-                        name="membership"
-                        value="monthly"
-                        checked={formData.membership === 'monthly'}
-                        onChange={handleChange}
-                        className="radio radio-primary"
-                      />
-                      <div className="flex-1">
-                        <span className="label-text font-semibold">Monthly</span>
-                        <p className="text-xs text-base-content/70">Full access - $10/month</p>
-                      </div>
-                      <span className="text-lg font-bold">$10<span className="text-sm font-normal">/mo</span></span>
-                    </label>
-                    
-                    <label className="label cursor-pointer justify-start gap-3 border rounded-lg p-4 hover:bg-base-200 border-primary">
-                      <input
-                        type="radio"
-                        name="membership"
-                        value="yearly"
-                        checked={formData.membership === 'yearly'}
-                        onChange={handleChange}
-                        className="radio radio-primary"
-                      />
-                      <div className="flex-1">
-                        <span className="label-text font-semibold">Yearly <span className="badge badge-sm badge-primary">Best Value</span></span>
-                        <p className="text-xs text-base-content/70">Full access - Save $20/year</p>
-                      </div>
-                      <div>
-                        <span className="text-lg font-bold">$100</span>
-                        <span className="text-xs line-through text-base-content/50 ml-1">$120</span>
-                        <span className="text-xs text-base-content/70 block">/year</span>
-                      </div>
-                    </label>
+                <div className="alert alert-info">
+                  <div>
+                    <h3 className="font-bold text-sm">Free Account</h3>
+                    <p className="text-xs">All accounts start free. You can purchase a license after signing up to access courses.</p>
                   </div>
                 </div>
 

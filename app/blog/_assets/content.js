@@ -1,6 +1,7 @@
 import Image from "next/image";
 import marcImg from "@/app/blog/_assets/images/authors/marc.png";
-import introducingSupabaseImg from "@/public/blog/introducing-supabase/header.png";
+// TODO: Add actual blog article images
+const placeholderImg = marcImg;
 
 // ==================================================================================================================================================================
 // BLOG CATEGORIES 🏷️
@@ -8,33 +9,43 @@ import introducingSupabaseImg from "@/public/blog/introducing-supabase/header.pn
 
 // These slugs are used to generate pages in the /blog/category/[categoryI].js. It's a way to group articles by category.
 const categorySlugs = {
-  feature: "feature",
-  tutorial: "tutorial",
+  islamicStudies: "islamic-studies",
+  faith: "faith",
+  learning: "learning",
 };
 
 // All the blog categories data display in the /blog/category/[categoryI].js pages.
 export const categories = [
   {
     // The slug to use in the URL, from the categorySlugs object above.
-    slug: categorySlugs.feature,
+    slug: categorySlugs.islamicStudies,
     // The title to display the category title (h1), the category badge, the category filter, and more. Less than 60 characters.
-    title: "New Features",
+    title: "Islamic Studies",
     // A short version of the title above, display in small components like badges. 1 or 2 words
-    titleShort: "Features",
+    titleShort: "Studies",
     // The description of the category to display in the category page. Up to 160 characters.
     description:
-      "Here are the latest features we've added to ShipFast. I'm constantly improving our product to help you ship faster.",
+      "Explore articles on Islamic studies, Quranic exegesis, Hadith, and Islamic scholarship.",
     // A short version of the description above, only displayed in the <Header /> on mobile. Up to 60 characters.
-    descriptionShort: "Latest features added to ShipFast.",
+    descriptionShort: "Articles on Islamic studies and scholarship.",
   },
   {
-    slug: categorySlugs.tutorial,
-    title: "How Tos & Tutorials",
-    titleShort: "Tutorials",
+    slug: categorySlugs.faith,
+    title: "Faith & Spirituality",
+    titleShort: "Faith",
     description:
-      "Learn how to use ShipFast with these step-by-step tutorials. I'll show you how to ship faster and save time.",
+      "Deepen your understanding of faith, spirituality, and Islamic teachings.",
     descriptionShort:
-      "Learn how to use ShipFast with these step-by-step tutorials.",
+      "Articles on faith and Islamic spirituality.",
+  },
+  {
+    slug: categorySlugs.learning,
+    title: "Learning Resources",
+    titleShort: "Learning",
+    description:
+      "Tips, guides, and resources to enhance your Islamic learning journey.",
+    descriptionShort:
+      "Resources for Islamic learning.",
   },
 ];
 
@@ -95,41 +106,25 @@ const socialIcons = {
 
 // These slugs are used to generate pages in the /blog/author/[authorId].js. It's a way to show all articles from an author.
 const authorSlugs = {
-  marc: "marc",
+  ustadhMubarak: "ustadh-mubarak",
 };
 
 // All the blog authors data display in the /blog/author/[authorId].js pages.
 export const authors = [
   {
     // The slug to use in the URL, from the authorSlugs object above.
-    slug: authorSlugs.marc,
+    slug: authorSlugs.ustadhMubarak,
     // The name to display in the author's bio. Up to 60 characters.
-    name: "Marc Lou",
+    name: "Ustadh Mubarak",
     // The job to display in the author's bio. Up to 60 characters.
-    job: "Maker of ByeDispute",
+    job: "Islamic Scholar & Educator",
     // The description of the author to display in the author's bio. Up to 160 characters.
     description:
-      "Marc is a developer and an entrepreneur. He's built 20 startups in the last 3 years. 6 were profitable and 3 were acquired. He's currently building ByeDispute, the #1 Stripe Chargebacks Protection tool.",
+      "Ustadh Mubarak is a dedicated Islamic scholar and educator, committed to making authentic Islamic knowledge accessible to Muslims worldwide.",
     // The avatar of the author to display in the author's bio and avatar badge. It's better to use a local image, but you can also use an external image (https://...)
-    avatar: marcImg,
+    avatar: marcImg, // TODO: Replace with actual author image
     // A list of social links to display in the author's bio.
-    socials: [
-      {
-        name: socialIcons.twitter.name,
-        icon: socialIcons.twitter.svg,
-        url: "https://twitter.com/marc_louvion",
-      },
-      {
-        name: socialIcons.linkedin.name,
-        icon: socialIcons.linkedin.svg,
-        url: "https://www.linkedin.com/in/marclouvion/",
-      },
-      {
-        name: socialIcons.github.name,
-        icon: socialIcons.github.svg,
-        url: "https://github.com/Marc-Lou-Org/ship-fast",
-      },
-    ],
+    socials: [],
   },
 ];
 
@@ -153,90 +148,195 @@ const styles = {
 // All the blog articles data display in the /blog/[articleId].js pages.
 export const articles = [
   {
-    // The unique slug to use in the URL. It's also used to generate the canonical URL.
-    slug: "introducing-supabase",
-    // The title to display in the article page (h1). Less than 60 characters. It's also used to generate the meta title.
-    title: "Introducing Supabase to ShipFast",
-    // The description of the article to display in the article page. Up to 160 characters. It's also used to generate the meta description.
+    slug: "understanding-usool-at-tafseer",
+    title: "Understanding Usūl al-Tafsīr: Principles of Quranic Exegesis",
     description:
-      "Supabase is an open-source Firebase alternative. It's a great tool for building a backend for your app. It's now integrated with ShipFast!",
-    // An array of categories of the article. It's used to generate the category badges, the category filter, and more.
+      "Learn the fundamental principles and methodologies used by Islamic scholars to correctly interpret and understand the meanings of the Qur'an.",
     categories: [
-      categories.find((category) => category.slug === categorySlugs.feature),
-    ],
-    // The author of the article. It's used to generate a link to the author's bio page.
-    author: authors.find((author) => author.slug === authorSlugs.marc),
-    // The date of the article. It's used to generate the meta date.
-    publishedAt: "2023-11-20",
+      categories.find((category) => category?.slug === categorySlugs.islamicStudies) || categories[0],
+    ].filter(Boolean),
+    author: authors.find((author) => author.slug === authorSlugs.ustadhMubarak),
+    publishedAt: "2025-01-15",
     image: {
-      // The image to display in <CardArticle /> components.
-      src: introducingSupabaseImg,
-      // The relative URL of the same image to use in the Open Graph meta tags & the Schema Markup JSON-LD.
-      urlRelative: "/blog/introducing-supabase/header.jpg",
-      alt: "Supabase and ShipFast logo combined",
+      src: placeholderImg, // TODO: Replace with actual article image
+      urlRelative: "/blog/understanding-usool-at-tafseer/header.jpg",
+      alt: "Quranic exegesis and Islamic scholarship",
     },
-    // The actual content of the article that will be shown under the <h1> title in the article page.
     content: (
       <>
-        <Image
-          src={introducingSupabaseImg}
-          alt="Supabase and ShipFast logo combined"
-          width={700}
-          height={500}
-          priority={true}
-          className="rounded-box"
-          placeholder="blur"
-        />
+        <section className="mb-8">
+          <Image
+            src={placeholderImg}
+            alt="Quranic exegesis and Islamic scholarship"
+            width={800}
+            height={450}
+            priority={true}
+            className="rounded-box w-full"
+          />
+        </section>
         <section>
-          <h2 className={styles.h2}>Introduction</h2>
+          <h2 className={styles.h2}>Introduction to Usūl al-Tafsīr</h2>
           <p className={styles.p}>
-            Supabase is an open-source Firebase alternative. It&apos;s a great
-            tool for building a backend for your app. It&apos;s now integrated
-            with ShipFast!
+            Usūl al-Tafsīr, or the Principles of Quranic Exegesis, is a foundational science in Islamic scholarship. 
+            It provides the essential rules and methodologies that scholars use to correctly understand and interpret the 
+            meanings of the Qur&apos;an. Without these principles, interpretation risks becoming arbitrary and disconnected 
+            from the authentic understanding of the text.
           </p>
         </section>
 
         <section>
-          <h3 className={styles.h3}>1. Create a supabase account</h3>
+          <h3 className={styles.h3}>The Importance of Proper Methodology</h3>
           <p className={styles.p}>
-            First, go to{" "}
-            <a href="https://supabase.com/" className="link link-primary">
-              Supabase
-            </a>{" "}
-            and create an account. It&apos;s free for up to 10,000 rows per
-            table.
-            <br />
-            Then create a new project and a new table. You can use the following
-            SQL schema:
+            The Qur&apos;an is the word of Allah, revealed to guide humanity. To properly understand its message, 
+            we must follow the established principles that have been developed by scholars throughout Islamic history. 
+            These principles ensure that our understanding remains faithful to the original intent of the revelation.
           </p>
-
-          <pre className={styles.code}>
-            <code>
-              {`CREATE TABLE public.users (
-  id bigint NOT NULL DEFAULT nextval('users_id_seq'::regclass),
-  email text NOT NULL,
-  password text NOT NULL,
-  created_at timestamp with time zone NOT NULL DEFAULT now(),
-  updated_at timestamp with time zone NOT NULL DEFAULT now(),
-  CONSTRAINT users_pkey PRIMARY KEY (id)
-);`}
-            </code>
-          </pre>
         </section>
 
         <section>
-          <h3 className={styles.h3}>2. Add your credentials to ShipFast</h3>
-          <p className={styles.p}>
-            Copy the <span className={styles.codeInline}>API URL</span> and{" "}
-            <span className={styles.codeInline}>API Key</span> from your
-            Supabase project settings and add them to your ShipFast project
-            settings. Add these files to your project:
-          </p>
-
+          <h3 className={styles.h3}>Key Principles</h3>
           <ul className={styles.ul}>
-            <li className={styles.li}>.env.local</li>
-            <li className={styles.li}>.env.production</li>
+            <li className={styles.li}>The Qur&apos;an explains itself (Tafsīr al-Qur&apos;an bi al-Qur&apos;an)</li>
+            <li className={styles.li}>The Sunnah provides essential context and explanation</li>
+            <li className={styles.li}>The understanding of the Companions (Sahābah) is highly valued</li>
+            <li className={styles.li}>Knowledge of Arabic language and grammar is essential</li>
+            <li className={styles.li}>Understanding the context of revelation (Asbāb an-Nuzūl)</li>
           </ul>
+        </section>
+      </>
+    ),
+  },
+  {
+    slug: "strengthening-your-faith",
+    title: "Strengthening Your Faith: Practical Steps for Muslims",
+    description:
+      "Discover practical ways to strengthen your faith and deepen your connection with Allah through daily practices and spiritual reflection.",
+    categories: [
+      categories.find((category) => category?.slug === categorySlugs.faith) || categories[1],
+    ].filter(Boolean),
+    author: authors.find((author) => author.slug === authorSlugs.ustadhMubarak),
+    publishedAt: "2025-01-10",
+    image: {
+      src: placeholderImg, // TODO: Replace with actual article image
+      urlRelative: "/blog/strengthening-your-faith/header.jpg",
+      alt: "Islamic faith and spirituality",
+    },
+    content: (
+      <>
+        <section className="mb-8">
+          <Image
+            src={placeholderImg}
+            alt="Islamic faith and spirituality"
+            width={800}
+            height={450}
+            priority={true}
+            className="rounded-box w-full"
+          />
+        </section>
+        <section>
+          <h2 className={styles.h2}>Building a Strong Foundation</h2>
+          <p className={styles.p}>
+            Faith (Īmān) is not static—it increases and decreases based on our actions, knowledge, and connection with Allah. 
+            Strengthening your faith requires consistent effort, knowledge, and practice. This article explores practical 
+            steps every Muslim can take to deepen their faith.
+          </p>
+        </section>
+
+        <section>
+          <h3 className={styles.h3}>1. Regular Prayer and Remembrance</h3>
+          <p className={styles.p}>
+            The five daily prayers (Salāh) are the pillars of faith. Establishing them on time and with presence of heart 
+            strengthens your connection with Allah. Additionally, regular remembrance (Dhikr) throughout the day keeps your 
+            heart connected to the Divine.
+          </p>
+        </section>
+
+        <section>
+          <h3 className={styles.h3}>2. Seeking Knowledge</h3>
+          <p className={styles.p}>
+            Seeking Islamic knowledge is an act of worship. The more you learn about Islam, the stronger your faith becomes. 
+            Start with the basics: understanding the Qur&apos;an, learning about the Prophet&apos;s life (Sīrah), and studying 
+            the fundamentals of faith (Aqīdah).
+          </p>
+        </section>
+
+        <section>
+          <h3 className={styles.h3}>3. Reflecting on the Qur&apos;an</h3>
+          <p className={styles.p}>
+            Regular recitation and reflection on the Qur&apos;an nourishes the soul. Even if you don&apos;t understand Arabic, 
+            reading translations and contemplating the meanings can profoundly impact your faith. Set aside time daily for 
+            this spiritual practice.
+          </p>
+        </section>
+      </>
+    ),
+  },
+  {
+    slug: "effective-islamic-learning",
+    title: "Effective Islamic Learning: A Student&apos;s Guide",
+    description:
+      "Learn how to maximize your Islamic studies with effective learning strategies, time management, and study techniques.",
+    categories: [
+      categories.find((category) => category?.slug === categorySlugs.learning) || categories[2],
+    ].filter(Boolean),
+    author: authors.find((author) => author.slug === authorSlugs.ustadhMubarak),
+    publishedAt: "2025-01-05",
+    image: {
+      src: placeholderImg, // TODO: Replace with actual article image
+      urlRelative: "/blog/effective-islamic-learning/header.jpg",
+      alt: "Islamic learning and education",
+    },
+    content: (
+      <>
+        <section className="mb-8">
+          <Image
+            src={placeholderImg}
+            alt="Islamic learning and education"
+            width={800}
+            height={450}
+            priority={true}
+            className="rounded-box w-full"
+          />
+        </section>
+        <section>
+          <h2 className={styles.h2}>The Path of Learning</h2>
+          <p className={styles.p}>
+            Seeking knowledge is a lifelong journey in Islam. Whether you&apos;re studying Tafsīr, Hadith, Fiqh, or Arabic, 
+            effective learning strategies can help you retain information and apply it meaningfully. This guide provides 
+            practical tips for Islamic students.
+          </p>
+        </section>
+
+        <section>
+          <h3 className={styles.h3}>1. Set Clear Learning Goals</h3>
+          <p className={styles.p}>
+            Define what you want to achieve in your studies. Are you learning for personal enrichment, to teach others, 
+            or to deepen your understanding of a specific topic? Clear goals help you stay focused and motivated.
+          </p>
+        </section>
+
+        <section>
+          <h3 className={styles.h3}>2. Create a Study Schedule</h3>
+          <p className={styles.p}>
+            Consistency is key in learning. Set aside dedicated time each day or week for your studies. Even 30 minutes 
+            of focused study is better than sporadic long sessions. Find a time when you&apos;re most alert and can concentrate.
+          </p>
+        </section>
+
+        <section>
+          <h3 className={styles.h3}>3. Take Notes and Review</h3>
+          <p className={styles.p}>
+            Writing helps retention. Take notes during lessons, summarize key points, and review them regularly. The act of 
+            writing and reviewing reinforces learning and helps you identify areas that need more attention.
+          </p>
+        </section>
+
+        <section>
+          <h3 className={styles.h3}>4. Practice and Apply</h3>
+          <p className={styles.p}>
+            Knowledge without application is incomplete. Try to apply what you learn in your daily life. If you&apos;re learning 
+            about prayer, practice the proper form. If studying Hadith, reflect on how to implement the teachings.
+          </p>
         </section>
       </>
     ),

@@ -34,12 +34,22 @@ export async function generateMetadata({ params }) {
 
 export default async function Article({ params }) {
   const article = articles.find((article) => article.slug === params.articleId);
+  
+  if (!article) {
+    return <div>Article not found</div>;
+  }
+  
+  // Ensure categories exist and filter out any undefined values
+  const articleCategories = (article.categories || []).filter(Boolean);
+  
   const articlesRelated = articles
     .filter(
       (a) =>
         a.slug !== params.articleId &&
+        a.categories &&
+        Array.isArray(a.categories) &&
         a.categories.some((c) =>
-          article.categories.map((c) => c.slug).includes(c.slug)
+          c && articleCategories.map((cat) => cat.slug).includes(c.slug)
         )
     )
     .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt))
@@ -100,12 +110,14 @@ export default async function Article({ params }) {
         {/* HEADER WITH CATEGORIES AND DATE AND TITLE */}
         <section className="my-12 md:my-20 max-w-[800px]">
           <div className="flex items-center gap-4 mb-6">
-            {article.categories.map((category) => (
-              <BadgeCategory
-                category={category}
-                key={category.slug}
-                extraStyle="!badge-lg"
-              />
+            {articleCategories.length > 0 && articleCategories.map((category) => (
+              category && category.slug && (
+                <BadgeCategory
+                  category={category}
+                  key={category.slug}
+                  extraStyle="!badge-lg"
+                />
+              )
             ))}
             <span className="text-base-content/80" itemProp="datePublished">
               {new Date(article.publishedAt).toLocaleDateString("en-US", {

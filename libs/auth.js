@@ -79,11 +79,30 @@ export function getUserMembership() {
 }
 
 /**
- * Check if user has paid membership
+ * Check if user has paid membership (legacy - for backward compatibility)
  */
 export function hasPaidMembership() {
   const membership = getUserMembership();
   return membership === 'paid' || membership === 'monthly' || membership === 'yearly';
+}
+
+/**
+ * Check if user has an active license
+ */
+export async function hasActiveLicense() {
+  if (typeof window === 'undefined') return false;
+  
+  const user = getUser();
+  if (!user) return false;
+
+  try {
+    const response = await fetch(`/api/licenses/check?userId=${user.id}`);
+    const data = await response.json();
+    return data.success && data.hasLicense === true;
+  } catch (error) {
+    console.error('Check license error:', error);
+    return false;
+  }
 }
 
 /**
@@ -175,19 +194,38 @@ export async function updateMembership(email, membership) {
 }
 
 /**
- * Check if user can access course (based on membership)
+ * Check if a course is premium (requires license)
  */
-export function canAccessCourse(courseId) {
-  const membership = getUserMembership();
+export function isPremiumCourse(courseId) {
+  if (typeof window === 'undefined') return false;
+  
+  // Import courseUtils dynamically to avoid SSR issues
+  try {
+    const { isPremiumCourse: checkPremium } = require('@/app/courses/courseUtils');
+    return checkPremium(courseId);
+  } catch (error) {
+    // Fallback: default to free
+    return false;
+  }
+}
+
+/**
+ * Check if user can access course (based on license and course type)
+ */
+export async function canAccessCourse(courseId) {
   const hasSession = hasActiveSession();
   
   if (!hasSession) return false;
   
-  // Paid members (monthly, yearly, or legacy 'paid') can access all courses
-  if (membership === 'paid' || membership === 'monthly' || membership === 'yearly') return true;
+  // Free courses are accessible to everyone
+  if (!isPremiumCourse(courseId)) {
+    return true;
+  }
   
-  // Free tier access logic
-  return true;
+  // Premium courses require an active license
+  const hasLicense = await hasActiveLicense();
+  
+  return hasLicense;
 }
 
 /**
@@ -219,6 +257,19 @@ export async function enrollInCourse(courseId) {
   
   const user = getUser();
   if (!user) return { success: false, error: 'Not logged in' };
+
+  // Check if course is premium and user has license
+  const { isPremiumCourse } = require('@/app/courses/courseUtils');
+  if (isPremiumCourse(courseId)) {
+    const hasLicense = await hasActiveLicense();
+    if (!hasLicense) {
+      return { 
+        success: false, 
+        error: 'License required',
+        message: 'This is a premium course. Please purchase or activate a license to enroll.'
+      };
+    }
+  }
 
   try {
     const response = await fetch('/api/courses/enroll', {

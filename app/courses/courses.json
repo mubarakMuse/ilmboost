@@ -3,285 +3,18 @@
     "lastUpdated": "12-11-2025",
     "courses": [
        
-          {
-            "courseID": "TAF001",
-            "type": "tafseer",
-            "estimatedTime": "1 hour",
-            "teacher": "Ustadh Mubarak",
-            "courseSlug": "fundamentals-of-quran-exegesis",
-            "courseTitle": "Fundamentals of Qur'an Exegesis (Usūl al-Tafsīr)",
-            "courseImage": "./app/islamic-studies/images/fundamentals-of-quran-exegesis-image.png",
-            "courseImageAlt": "Fundamentals of Qur'an Exegesis (Usūl al-Tafsīr)",
-            "status": "Available Now",
-            "courseDescription": "A course providing the core principles, methodologies, and tools used by Islamic scholars to correctly understand and interpret the meanings of the Qur'an.",
-            "whatYouWillLearn": [
-              "The definition and distinction between Tafsīr (exegesis) and Ta'wīl (interpretation).",
-              "The correct hierarchy and sources for interpreting the Qur'an.",
-              "The different types of Tafsīr: Bi al-Ma'thūr (narrated) and Bi al-Ra'y (opinion-based).",
-              "The historical stages of Tafsīr development.",
-              "The essential 'External Sciences' required for a Mufassir (Exegete)."
-            ],
-            "sections": [
-              {
-                "sectionNumber": 1,
-                "sectionTitle": "Introduction: Tafsīr vs. Ta'wīl and The Need for Usūl",
-                "vocab": [
-                  {"term": "التفسير", "meaning": "Al-Tafsīr (Qur'an Exegesis/Explanation)"},
-                  {"term": "التأويل", "meaning": "Al-Ta'wīl (Interpretation/Deducing deeper meaning)"},
-                  {"term": "أصول التفسير", "meaning": "Usūl al-Tafsīr (Principles of Exegesis)"},
-                  {"term": "المفسر", "meaning": "Al-Mufassir (The Exegete/Scholar of Tafsīr)"},
-                  {"term": "المعاني", "meaning": "Al-Ma'ānī (Meanings/Significance)"}
-                ],
-                "content": [
-                  {
-                    "type": "heading",
-                    "text": "Defining the Key Terms"
-                  },
-                  {
-                    "type": "paragraph",
-                    "text": "The science of Usūl al-Tafsīr provides the rules necessary to move from the literal text of the Qur'an to its intended legal, theological, and spiritual meanings. Without these rules, interpretation risks becoming arbitrary."
-                  },
-                  {
-                    "type": "list",
-                    "items": [
-                      "**Tafsīr:** Primarily focuses on explaining the literal meaning (apparent meaning) of the words, grammar, and context of the verse.",
-                      "**Ta'wīl:** Focuses on interpreting the deeper or more obscure meaning that aligns with the literal text but clarifies its practical application or spiritual implication. Ta'wīl must never contradict the core meaning established by Tafsīr."
-                    ]
-                  },
-                  {
-                    "type": "quote",
-                    "text": "The greatest danger in Tafsīr is allowing personal desires (Hawā) to dictate the meaning of the divine text, rather than following the sound principles established by the scholars."
-                  },
-                  {
-                    "type": "video",
-                    "src": "https://youtu.be/CmWS38tZgIA?si=gJdNZuZshNBDm_vm",
-                    "alt": "Explanation of Usool At-Tafseer (As-Suyuuti) - Lesson #1 by Ustadh abdullahi bihi"
-                  }
-                ],
-                "quiz": [
-                  {
-                    "question": "What is the main focus of Al-Tafsīr (Exegesis)?",
-                    "options": [
-                      "Predicting future events and prophecy.",
-                      "Explaining the literal meaning, grammar, and context of the Qur'anic verses.",
-                      "Translating the Qur'an into every language possible.",
-                      "Writing new laws independent of the Sunnah."
-                    ],
-                    "correctAnswer": "Explaining the literal meaning, grammar, and context of the Qur'anic verses."
-                  },
-                  {
-                    "question": "Why is the science of Usūl al-Tafsīr necessary?",
-                    "options": [
-                      "To allow anyone to interpret the Qur'an freely.",
-                      "To prevent arbitrary interpretations and ensure the Qur'an's meaning is derived correctly.",
-                      "To simplify the Arabic language for non-Arabs.",
-                      "To argue against the Sunnah."
-                    ],
-                    "correctAnswer": "To prevent arbitrary interpretations and ensure the Qur'an's meaning is derived correctly."
-                  }
-                ]
-              },
-              {
-                "sectionNumber": 2,
-                "sectionTitle": "The Hierarchy of Primary Sources",
-                "vocab": [
-                  {"term": "القرآن", "meaning": "Al-Qur'an (The primary source of Tafsīr)"},
-                  {"term": "تفسير القرآن بالقرآن", "meaning": "Tafsīr al-Qur'an bi al-Qur'an (Explaining the Qur'an by the Qur'an)"},
-                  {"term": "أسباب النزول", "meaning": "Asbāb an-Nuzūl (Occasions/Contexts of Revelation)"},
-                  {"term": "الناسخ والمنسوخ", "meaning": "An-Nāsikh wa al-Mansūkh (Abrogating and Abrogated verses)"},
-                  {"term": "الصحابة", "meaning": "As-Sahābah (The Companions of the Prophet)"}
-                ],
-                "content": [
-                  {
-                    "type": "heading",
-                    "text": "The Indispensable Order of Sources"
-                  },
-                  {
-                    "type": "paragraph",
-                    "text": "Scholars of Usūl al-Tafsīr agree that interpretation must follow a strict, decreasing hierarchy of authority to ensure fidelity to the divine message. One cannot jump to a later source if an explanation exists in a higher source."
-                  },
-                  {
-                    "type": "list",
-                    "items": [
-                      "**1. Qur'an by Qur'an:** The Qur'an is the best explanation of itself, as one verse may elaborate on the meaning of another (e.g., general vs. specific, brief vs. detailed).",
-                      "**2. Qur'an by Sunnah:** The Sunnah (Prophet's sayings and actions) is the practical application and clarification of the Qur'an. The Prophet was the first and best Mufassir.",
-                      "**3. Qur'an by Companions (Sahābah):** The Companions witnessed the revelation and knew the context of revelation (Asbāb an-Nuzūl) and the Prophet's direct teachings.",
-                      "**4. Qur'an by Successors (Tābi'ūn):** The generation after the Companions took their knowledge directly from the Sahābah."
-                    ]
-                  },
-                  {
-                    "type": "quote",
-                    "text": "Knowing the occasions of revelation (Asbāb an-Nuzūl) is crucial, as it limits arbitrary interpretations of general verses."
-                  }
-                ],
-                "quiz": [
-                  {
-                    "question": "What is considered the highest and most authoritative source for interpreting a verse of the Qur'an?",
-                    "options": [
-                      "The opinion of a contemporary scholar.",
-                      "Tafsīr al-Qur'an bi al-Qur'an (Explaining the Qur'an by the Qur'an).",
-                      "The Hadith found in weak collections.",
-                      "Personal logical reasoning (Ra'y)."
-                    ],
-                    "correctAnswer": "Tafsīr al-Qur'an bi al-Qur'an (Explaining the Qur'an by the Qur'an)."
-                  },
-                  {
-                    "question": "Why are the interpretations of the Companions (Sahābah) given high authority in Tafsīr?",
-                    "options": [
-                      "They were the first to write books of Tafsīr.",
-                      "They were the primary source for the language of the Qur'an.",
-                      "They witnessed the context of revelation (Asbāb an-Nuzūl) and learned directly from the Prophet.",
-                      "They were responsible for determining the Abrogating and Abrogated verses."
-                    ],
-                    "correctAnswer": "They witnessed the context of revelation (Asbāb an-Nuzūl) and learned directly from the Prophet."
-                  }
-                ]
-              },
-              {
-                "sectionNumber": 3,
-                "sectionTitle": "Types of Tafsīr: Ma'thūr vs. Ra'y",
-                "vocab": [
-                  {"term": "التفسير بالمأثور", "meaning": "Tafsīr bi al-Ma'thūr (Narrated/Transmitted Exegesis)"},
-                  {"term": "التفسير بالرأي", "meaning": "Tafsīr bi al-Ra'y (Opinion-Based Exegesis)"},
-                  {"term": "الرأي المحمود", "meaning": "Al-Ra'y al-Mahmūd (Praiseworthy/Acceptable Opinion)"},
-                  {"term": "الرأي المذموم", "meaning": "Al-Ra'y al-Madhmūm (Blameworthy/Unacceptable Opinion)"},
-                  {"term": "الإجتهاد", "meaning": "Ijtihād (Independent legal reasoning)"}
-                ],
-                "content": [
-                  {
-                    "type": "heading",
-                    "text": "Tafsīr bi al-Ma'thūr: The Narrated Path"
-                  },
-                  {
-                    "type": "paragraph",
-                    "text": "**Tafsīr bi al-Ma'thūr** refers to interpretation derived from the narrated tradition, exclusively using the first three sources of the hierarchy: Qur'an, Sunnah, and the sayings of the Sahābah. This is considered the safest and most reliable form of exegesis, as it is grounded directly in transmission."
-                  },
-                  {
-                    "type": "heading",
-                    "text": "Tafsīr bi al-Ra'y: The Role of Opinion and Intellect"
-                  },
-                  {
-                    "type": "paragraph",
-                    "text": "**Tafsīr bi al-Ra'y** is interpretation based on the exegete's independent reasoning (**Ijtihād**). This type is categorized as either praiseworthy or blameworthy:"
-                  },
-                  {
-                    "type": "list",
-                    "items": [
-                      "**Praiseworthy (Al-Ra'y al-Mahmūd):** Used only after exhausting all Ma'thūr sources, and relies on solid knowledge of Arabic, Usūl al-Fiqh, and related sciences. It is used for verses that are general or open to reasonable deduction.",
-                      "**Blameworthy (Al-Ra'y al-Madhmūm):** Based on the interpreter's own whims (Hawā), sectarian biases, or a lack of the necessary scholarly tools. This is forbidden and leads to deviation."
-                    ]
-                  },
-                  {
-                    "type": "quote",
-                    "text": "A sound Tafsīr bi al-Ra'y is essentially an intellectual exertion that remains strictly within the boundaries set by the transmitted sources (Ma'thūr)."
-                  }
-                ],
-                "quiz": [
-                  {
-                    "question": "What primary sources are used in Tafsīr bi al-Ma'thūr (Narrated Exegesis)?",
-                    "options": [
-                      "Modern scientific theories and physics.",
-                      "The Qur'an, Sunnah, and sayings of the Companions and Successors.",
-                      "Philosophical texts and ancient Greek knowledge.",
-                      "Non-Muslim historical records and literature."
-                    ],
-                    "correctAnswer": "The Qur'an, Sunnah, and sayings of the Companions and Successors."
-                  },
-                  {
-                    "question": "When does Tafsīr bi al-Ra'y (Opinion-Based Exegesis) become blameworthy (Al-Ra'y al-Madhmūd)?",
-                    "options": [
-                      "When it is based on solid knowledge of the Arabic language.",
-                      "When it is used to support sectarian biases or personal desires (Hawā) without relying on primary sources.",
-                      "When it is written by a famous Mufassir.",
-                      "When it is written in a language other than Arabic."
-                    ],
-                    "correctAnswer": "When it is used to support sectarian biases or personal desires (Hawā) without relying on primary sources."
-                  }
-                ]
-              },
-              {
-                "sectionNumber": 4,
-                "sectionTitle": "The External Sciences of the Mufassir",
-                "vocab": [
-                  {"term": "علوم القرآن", "meaning": "Ulūm al-Qur'an (Sciences of the Qur'an)"},
-                  {"term": "النحو", "meaning": "An-Nahw (Arabic Grammar/Syntax)"},
-                  {"term": "الصرف", "meaning": "As-Sarf (Arabic Morphology/Word Formation)"},
-                  {"term": "البيان", "meaning": "Al-Bayān (Rhetoric/Eloquence)"},
-                  {"term": "الفقه", "meaning": "Al-Fiqh (Islamic Jurisprudence/Law)"},
-                  {"term": "أصول الفقه", "meaning": "Usūl al-Fiqh (Principles of Islamic Jurisprudence)"}
-                ],
-                "content": [
-                  {
-                    "type": "heading",
-                    "text": "Linguistic Mastery: The Keys to Meaning"
-                  },
-                  {
-                    "type": "paragraph",
-                    "text": "A Mufassir must possess comprehensive mastery over the Arabic language, as the Qur'an's inimitable eloquence (I'jāz) and precision can only be grasped through its linguistic structure. Key linguistic sciences include:"
-                  },
-                  {
-                    "type": "list",
-                    "items": [
-                      "**Nahw (Syntax) and Sarf (Morphology):** These govern word function and structure, as a single vowel change can drastically alter the legal meaning of a verse.",
-                      "**Al-Bayān (Rhetoric):** Understanding figurative speech, metaphors, emphasis, and conciseness, necessary to appreciate the Qur'an's literary depth."
-                    ]
-                  },
-                  {
-                    "type": "heading",
-                    "text": "Legal and Contextual Sciences"
-                  },
-                  {
-                    "type": "paragraph",
-                    "text": "Beyond language, a Mufassir must be proficient in the sciences that derive law and context from the texts:"
-                  },
-                  {
-                    "type": "list",
-                    "items": [
-                      "**Usūl al-Fiqh:** Provides the methodology for legal deduction (Istinbāt) from the Qur'an and Sunnah, teaching how to apply universal rules to specific legal verses.",
-                      "**Ulūm al-Qur'an:** The broader sciences encompassing Nāsikh wa Mansūkh, Asbāb an-Nuzūl, and the different modes of recitation (Qirā'āt)."
-                    ]
-                  },
-                  {
-                    "type": "quote",
-                    "text": "It is agreed upon that ignorance of the Arabic language and its sciences is the single greatest cause of misinterpretation of the Qur'an."
-                  }
-                ],
-                "quiz": [
-                  {
-                    "question": "Which science is essential for understanding the legal rulings derived from the Qur'an, such as the methodology for legal deduction?",
-                    "options": [
-                      "An-Nahw (Syntax).",
-                      "As-Sarf (Morphology).",
-                      "Al-Fiqh (Jurisprudence).",
-                      "Usūl al-Fiqh (Principles of Jurisprudence)."
-                    ],
-                    "correctAnswer": "Usūl al-Fiqh (Principles of Jurisprudence)."
-                  },
-                  {
-                    "question": "What specific area of Arabic language study addresses the use of figurative speech, metaphors, and the Qur'an's eloquence?",
-                    "options": [
-                      "Al-Bayān (Rhetoric).",
-                      "Asbāb an-Nuzūl.",
-                      "Ilm al-Hadith.",
-                      "Ilm al-Tawhīd."
-                    ],
-                    "correctAnswer": "Al-Bayān (Rhetoric)."
-                  }
-                ]
-              }
-            ]
-          },
+         
           {
             "courseID": "TAF002",
             "courseSlug": "juz-amma-tafseer",
             "type": "tafseer",
             "estimatedTime": "10 hours",
             "teacher": "Ustadh Mubarak",
-            "courseTitle": "Tafseer of Juz' Amma (Surahs 78-114)",
+            "courseTitle": "Tafseer of Juz' Amma",
             "courseImage": "./app/islamic-studies/images/juz-amma-tafseer-image.png",
             "courseImageAlt": "Tafseer of Juz' Amma (Surahs 78-114)",
             "status": "Available Now",
-            "courseDescription": "An in-depth verse-by-verse translation, detailed explanation (Tafseer), essential vocabulary, and profound spiritual takeaways for all 37 Surahs of the 30th Part of the Qur'an.",
+            "courseDescription": "An in-depth verse-by-verse translation, detailed explanation of the Surahs in Juz' Amma (Tafseer).",
             "whatYouWillLearn": [
               "The translation, linguistic significance, and key themes of every Surah in Juz' Amma.",
               "Detailed explanation of key vocabulary and concepts such as the Day of Judgment (Akhirah) and divine accountability.",
@@ -2755,6 +2488,274 @@
               }
             ]
           }, {
+            "courseID": "TAF001",
+            "type": "tafseer",
+            "premium": false,
+            "estimatedTime": "1 hour",
+            "teacher": "Ustadh Mubarak",
+            "courseSlug": "fundamentals-of-quran-exegesis",
+            "courseTitle": "Fundamentals of Qur'an Exegesis (Usūl al-Tafsīr)",
+            "courseImage": "./app/islamic-studies/images/fundamentals-of-quran-exegesis-image.png",
+            "courseImageAlt": "Fundamentals of Qur'an Exegesis (Usūl al-Tafsīr)",
+            "status": "coming soon",
+            "courseDescription": " The core principles, methodologies, and tools used to correctly understand and interpret the meanings of the Qur'an.",
+            "whatYouWillLearn": [
+              "The definition and distinction between Tafsīr (exegesis) and Ta'wīl (interpretation).",
+              "The correct hierarchy and sources for interpreting the Qur'an.",
+              "The different types of Tafsīr: Bi al-Ma'thūr (narrated) and Bi al-Ra'y (opinion-based).",
+              "The historical stages of Tafsīr development.",
+              "The essential 'External Sciences' required for a Mufassir (Exegete)."
+            ],
+            "sections": [
+              {
+                "sectionNumber": 1,
+                "sectionTitle": "Introduction: Tafsīr vs. Ta'wīl and The Need for Usūl",
+                "vocab": [
+                  {"term": "التفسير", "meaning": "Al-Tafsīr (Qur'an Exegesis/Explanation)"},
+                  {"term": "التأويل", "meaning": "Al-Ta'wīl (Interpretation/Deducing deeper meaning)"},
+                  {"term": "أصول التفسير", "meaning": "Usūl al-Tafsīr (Principles of Exegesis)"},
+                  {"term": "المفسر", "meaning": "Al-Mufassir (The Exegete/Scholar of Tafsīr)"},
+                  {"term": "المعاني", "meaning": "Al-Ma'ānī (Meanings/Significance)"}
+                ],
+                "content": [
+                  {
+                    "type": "heading",
+                    "text": "Defining the Key Terms"
+                  },
+                  {
+                    "type": "paragraph",
+                    "text": "The science of Usūl al-Tafsīr provides the rules necessary to move from the literal text of the Qur'an to its intended legal, theological, and spiritual meanings. Without these rules, interpretation risks becoming arbitrary."
+                  },
+                  {
+                    "type": "list",
+                    "items": [
+                      "**Tafsīr:** Primarily focuses on explaining the literal meaning (apparent meaning) of the words, grammar, and context of the verse.",
+                      "**Ta'wīl:** Focuses on interpreting the deeper or more obscure meaning that aligns with the literal text but clarifies its practical application or spiritual implication. Ta'wīl must never contradict the core meaning established by Tafsīr."
+                    ]
+                  },
+                  {
+                    "type": "quote",
+                    "text": "The greatest danger in Tafsīr is allowing personal desires (Hawā) to dictate the meaning of the divine text, rather than following the sound principles established by the scholars."
+                  },
+                  {
+                    "type": "video",
+                    "src": "https://youtu.be/CmWS38tZgIA?si=gJdNZuZshNBDm_vm",
+                    "alt": "Explanation of Usool At-Tafseer (As-Suyuuti) - Lesson #1 by Ustadh abdullahi bihi"
+                  }
+                ],
+                "quiz": [
+                  {
+                    "question": "What is the main focus of Al-Tafsīr (Exegesis)?",
+                    "options": [
+                      "Predicting future events and prophecy.",
+                      "Explaining the literal meaning, grammar, and context of the Qur'anic verses.",
+                      "Translating the Qur'an into every language possible.",
+                      "Writing new laws independent of the Sunnah."
+                    ],
+                    "correctAnswer": "Explaining the literal meaning, grammar, and context of the Qur'anic verses."
+                  },
+                  {
+                    "question": "Why is the science of Usūl al-Tafsīr necessary?",
+                    "options": [
+                      "To allow anyone to interpret the Qur'an freely.",
+                      "To prevent arbitrary interpretations and ensure the Qur'an's meaning is derived correctly.",
+                      "To simplify the Arabic language for non-Arabs.",
+                      "To argue against the Sunnah."
+                    ],
+                    "correctAnswer": "To prevent arbitrary interpretations and ensure the Qur'an's meaning is derived correctly."
+                  }
+                ]
+              },
+              {
+                "sectionNumber": 2,
+                "sectionTitle": "The Hierarchy of Primary Sources",
+                "vocab": [
+                  {"term": "القرآن", "meaning": "Al-Qur'an (The primary source of Tafsīr)"},
+                  {"term": "تفسير القرآن بالقرآن", "meaning": "Tafsīr al-Qur'an bi al-Qur'an (Explaining the Qur'an by the Qur'an)"},
+                  {"term": "أسباب النزول", "meaning": "Asbāb an-Nuzūl (Occasions/Contexts of Revelation)"},
+                  {"term": "الناسخ والمنسوخ", "meaning": "An-Nāsikh wa al-Mansūkh (Abrogating and Abrogated verses)"},
+                  {"term": "الصحابة", "meaning": "As-Sahābah (The Companions of the Prophet)"}
+                ],
+                "content": [
+                  {
+                    "type": "heading",
+                    "text": "The Indispensable Order of Sources"
+                  },
+                  {
+                    "type": "paragraph",
+                    "text": "Scholars of Usūl al-Tafsīr agree that interpretation must follow a strict, decreasing hierarchy of authority to ensure fidelity to the divine message. One cannot jump to a later source if an explanation exists in a higher source."
+                  },
+                  {
+                    "type": "list",
+                    "items": [
+                      "**1. Qur'an by Qur'an:** The Qur'an is the best explanation of itself, as one verse may elaborate on the meaning of another (e.g., general vs. specific, brief vs. detailed).",
+                      "**2. Qur'an by Sunnah:** The Sunnah (Prophet's sayings and actions) is the practical application and clarification of the Qur'an. The Prophet was the first and best Mufassir.",
+                      "**3. Qur'an by Companions (Sahābah):** The Companions witnessed the revelation and knew the context of revelation (Asbāb an-Nuzūl) and the Prophet's direct teachings.",
+                      "**4. Qur'an by Successors (Tābi'ūn):** The generation after the Companions took their knowledge directly from the Sahābah."
+                    ]
+                  },
+                  {
+                    "type": "quote",
+                    "text": "Knowing the occasions of revelation (Asbāb an-Nuzūl) is crucial, as it limits arbitrary interpretations of general verses."
+                  }
+                ],
+                "quiz": [
+                  {
+                    "question": "What is considered the highest and most authoritative source for interpreting a verse of the Qur'an?",
+                    "options": [
+                      "The opinion of a contemporary scholar.",
+                      "Tafsīr al-Qur'an bi al-Qur'an (Explaining the Qur'an by the Qur'an).",
+                      "The Hadith found in weak collections.",
+                      "Personal logical reasoning (Ra'y)."
+                    ],
+                    "correctAnswer": "Tafsīr al-Qur'an bi al-Qur'an (Explaining the Qur'an by the Qur'an)."
+                  },
+                  {
+                    "question": "Why are the interpretations of the Companions (Sahābah) given high authority in Tafsīr?",
+                    "options": [
+                      "They were the first to write books of Tafsīr.",
+                      "They were the primary source for the language of the Qur'an.",
+                      "They witnessed the context of revelation (Asbāb an-Nuzūl) and learned directly from the Prophet.",
+                      "They were responsible for determining the Abrogating and Abrogated verses."
+                    ],
+                    "correctAnswer": "They witnessed the context of revelation (Asbāb an-Nuzūl) and learned directly from the Prophet."
+                  }
+                ]
+              },
+              {
+                "sectionNumber": 3,
+                "sectionTitle": "Types of Tafsīr: Ma'thūr vs. Ra'y",
+                "vocab": [
+                  {"term": "التفسير بالمأثور", "meaning": "Tafsīr bi al-Ma'thūr (Narrated/Transmitted Exegesis)"},
+                  {"term": "التفسير بالرأي", "meaning": "Tafsīr bi al-Ra'y (Opinion-Based Exegesis)"},
+                  {"term": "الرأي المحمود", "meaning": "Al-Ra'y al-Mahmūd (Praiseworthy/Acceptable Opinion)"},
+                  {"term": "الرأي المذموم", "meaning": "Al-Ra'y al-Madhmūm (Blameworthy/Unacceptable Opinion)"},
+                  {"term": "الإجتهاد", "meaning": "Ijtihād (Independent legal reasoning)"}
+                ],
+                "content": [
+                  {
+                    "type": "heading",
+                    "text": "Tafsīr bi al-Ma'thūr: The Narrated Path"
+                  },
+                  {
+                    "type": "paragraph",
+                    "text": "**Tafsīr bi al-Ma'thūr** refers to interpretation derived from the narrated tradition, exclusively using the first three sources of the hierarchy: Qur'an, Sunnah, and the sayings of the Sahābah. This is considered the safest and most reliable form of exegesis, as it is grounded directly in transmission."
+                  },
+                  {
+                    "type": "heading",
+                    "text": "Tafsīr bi al-Ra'y: The Role of Opinion and Intellect"
+                  },
+                  {
+                    "type": "paragraph",
+                    "text": "**Tafsīr bi al-Ra'y** is interpretation based on the exegete's independent reasoning (**Ijtihād**). This type is categorized as either praiseworthy or blameworthy:"
+                  },
+                  {
+                    "type": "list",
+                    "items": [
+                      "**Praiseworthy (Al-Ra'y al-Mahmūd):** Used only after exhausting all Ma'thūr sources, and relies on solid knowledge of Arabic, Usūl al-Fiqh, and related sciences. It is used for verses that are general or open to reasonable deduction.",
+                      "**Blameworthy (Al-Ra'y al-Madhmūm):** Based on the interpreter's own whims (Hawā), sectarian biases, or a lack of the necessary scholarly tools. This is forbidden and leads to deviation."
+                    ]
+                  },
+                  {
+                    "type": "quote",
+                    "text": "A sound Tafsīr bi al-Ra'y is essentially an intellectual exertion that remains strictly within the boundaries set by the transmitted sources (Ma'thūr)."
+                  }
+                ],
+                "quiz": [
+                  {
+                    "question": "What primary sources are used in Tafsīr bi al-Ma'thūr (Narrated Exegesis)?",
+                    "options": [
+                      "Modern scientific theories and physics.",
+                      "The Qur'an, Sunnah, and sayings of the Companions and Successors.",
+                      "Philosophical texts and ancient Greek knowledge.",
+                      "Non-Muslim historical records and literature."
+                    ],
+                    "correctAnswer": "The Qur'an, Sunnah, and sayings of the Companions and Successors."
+                  },
+                  {
+                    "question": "When does Tafsīr bi al-Ra'y (Opinion-Based Exegesis) become blameworthy (Al-Ra'y al-Madhmūd)?",
+                    "options": [
+                      "When it is based on solid knowledge of the Arabic language.",
+                      "When it is used to support sectarian biases or personal desires (Hawā) without relying on primary sources.",
+                      "When it is written by a famous Mufassir.",
+                      "When it is written in a language other than Arabic."
+                    ],
+                    "correctAnswer": "When it is used to support sectarian biases or personal desires (Hawā) without relying on primary sources."
+                  }
+                ]
+              },
+              {
+                "sectionNumber": 4,
+                "sectionTitle": "The External Sciences of the Mufassir",
+                "vocab": [
+                  {"term": "علوم القرآن", "meaning": "Ulūm al-Qur'an (Sciences of the Qur'an)"},
+                  {"term": "النحو", "meaning": "An-Nahw (Arabic Grammar/Syntax)"},
+                  {"term": "الصرف", "meaning": "As-Sarf (Arabic Morphology/Word Formation)"},
+                  {"term": "البيان", "meaning": "Al-Bayān (Rhetoric/Eloquence)"},
+                  {"term": "الفقه", "meaning": "Al-Fiqh (Islamic Jurisprudence/Law)"},
+                  {"term": "أصول الفقه", "meaning": "Usūl al-Fiqh (Principles of Islamic Jurisprudence)"}
+                ],
+                "content": [
+                  {
+                    "type": "heading",
+                    "text": "Linguistic Mastery: The Keys to Meaning"
+                  },
+                  {
+                    "type": "paragraph",
+                    "text": "A Mufassir must possess comprehensive mastery over the Arabic language, as the Qur'an's inimitable eloquence (I'jāz) and precision can only be grasped through its linguistic structure. Key linguistic sciences include:"
+                  },
+                  {
+                    "type": "list",
+                    "items": [
+                      "**Nahw (Syntax) and Sarf (Morphology):** These govern word function and structure, as a single vowel change can drastically alter the legal meaning of a verse.",
+                      "**Al-Bayān (Rhetoric):** Understanding figurative speech, metaphors, emphasis, and conciseness, necessary to appreciate the Qur'an's literary depth."
+                    ]
+                  },
+                  {
+                    "type": "heading",
+                    "text": "Legal and Contextual Sciences"
+                  },
+                  {
+                    "type": "paragraph",
+                    "text": "Beyond language, a Mufassir must be proficient in the sciences that derive law and context from the texts:"
+                  },
+                  {
+                    "type": "list",
+                    "items": [
+                      "**Usūl al-Fiqh:** Provides the methodology for legal deduction (Istinbāt) from the Qur'an and Sunnah, teaching how to apply universal rules to specific legal verses.",
+                      "**Ulūm al-Qur'an:** The broader sciences encompassing Nāsikh wa Mansūkh, Asbāb an-Nuzūl, and the different modes of recitation (Qirā'āt)."
+                    ]
+                  },
+                  {
+                    "type": "quote",
+                    "text": "It is agreed upon that ignorance of the Arabic language and its sciences is the single greatest cause of misinterpretation of the Qur'an."
+                  }
+                ],
+                "quiz": [
+                  {
+                    "question": "Which science is essential for understanding the legal rulings derived from the Qur'an, such as the methodology for legal deduction?",
+                    "options": [
+                      "An-Nahw (Syntax).",
+                      "As-Sarf (Morphology).",
+                      "Al-Fiqh (Jurisprudence).",
+                      "Usūl al-Fiqh (Principles of Jurisprudence)."
+                    ],
+                    "correctAnswer": "Usūl al-Fiqh (Principles of Jurisprudence)."
+                  },
+                  {
+                    "question": "What specific area of Arabic language study addresses the use of figurative speech, metaphors, and the Qur'an's eloquence?",
+                    "options": [
+                      "Al-Bayān (Rhetoric).",
+                      "Asbāb an-Nuzūl.",
+                      "Ilm al-Hadith.",
+                      "Ilm al-Tawhīd."
+                    ],
+                    "correctAnswer": "Al-Bayān (Rhetoric)."
+                  }
+                ]
+              }
+            ]
+          }, {
             "courseID": "HAD001",
             "type": "hadith",
             "estimatedTime": "1 hour",
@@ -3077,6 +3078,118 @@
                     "correctAnswer": "Al-'Adālah refers to moral integrity/righteousness, and Al-Dabt refers to accuracy/precision of memory."
                   }
                 ]
+              }
+            ]
+          },
+          {
+            "courseID": "HAD002",
+            "type": "hadith",
+            "premium": false,
+            "estimatedTime": "8 hours",
+            "teacher": "Ustadh Mubarak",
+            "courseSlug": "40-hadith-of-nawawi",
+            "courseTitle": "40 Hadith of Nawawi",
+            "courseImage": "2wCEAAkGBxMTEhUTExMWFhUXGBcaGBgYGBoXGBgbHRoYGhoaGh0bHSggGBolGxgaITEhJSkrLi4uGB8zODMtNygtLisBCgoKDg0OGhAQGy0fHyUtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf",
+            "courseImageAlt": "40 Hadith of Nawawi",
+            "status": "Coming Soon",
+            "courseDescription": "A comprehensive study of the 40 Hadith compiled by Imam Nawawi, covering essential Islamic teachings, ethics, and guidance for daily life.",
+            "whatYouWillLearn": [
+              "Understanding the 40 essential Hadith selected by Imam Nawawi",
+              "Practical application of Prophetic teachings in daily life",
+              "Ethical principles and moral guidance from the Sunnah",
+              "Spiritual lessons and wisdom from the Prophet's sayings"
+            ],
+            "sections": [
+              {
+                "sectionNumber": 1,
+                "sectionTitle": "Introduction to the 40 Hadith",
+                "vocab": [],
+                "content": [],
+                "quiz": []
+              },
+              {
+                "sectionNumber": 2,
+                "sectionTitle": "Hadith 1-10: Foundations of Faith",
+                "vocab": [],
+                "content": [],
+                "quiz": []
+              },
+              {
+                "sectionNumber": 3,
+                "sectionTitle": "Hadith 11-20: Worship and Devotion",
+                "vocab": [],
+                "content": [],
+                "quiz": []
+              },
+              {
+                "sectionNumber": 4,
+                "sectionTitle": "Hadith 21-30: Ethics and Character",
+                "vocab": [],
+                "content": [],
+                "quiz": []
+              },
+              {
+                "sectionNumber": 5,
+                "sectionTitle": "Hadith 31-40: Social Relations and Conduct",
+                "vocab": [],
+                "content": [],
+                "quiz": []
+              }
+            ]
+          },
+          {
+            "courseID": "FAI001",
+            "type": "faith",
+            "premium": false,
+            "estimatedTime": "6 hours",
+            "teacher": "Ustadh Mubarak",
+            "courseSlug": "take-your-faith",
+            "courseTitle": "Take Your Faith",
+            "courseImage": "2wCEAAkGBxMTEhUTExMWFhUXGBcaGBgYGBoXGBgbHRoYGhoaGh0bHSggGBolGxgaITEhJSkrLi4uGB8zODMtNygtLisBCgoKDg0OGhAQGy0fHyUtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf",
+            "courseImageAlt": "Take Your Faith",
+            "status": "Coming Soon",
+            "courseDescription": "A transformative course designed to strengthen your faith, deepen your connection with Allah, and provide practical guidance for spiritual growth.",
+            "whatYouWillLearn": [
+              "Understanding the pillars of faith (Arkan al-Iman)",
+              "Practical ways to strengthen your relationship with Allah",
+              "Overcoming spiritual challenges and doubts",
+              "Building a strong foundation of faith for daily life"
+            ],
+            "sections": [
+              {
+                "sectionNumber": 1,
+                "sectionTitle": "Understanding Faith (Iman)",
+                "vocab": [],
+                "content": [],
+                "quiz": []
+              },
+              {
+                "sectionNumber": 2,
+                "sectionTitle": "The Six Pillars of Faith",
+                "vocab": [],
+                "content": [],
+                "quiz": []
+              },
+              {
+                "sectionNumber": 3,
+                "sectionTitle": "Strengthening Your Connection with Allah",
+                "vocab": [],
+                "content": [],
+                "quiz": []
+              },
+              {
+                "sectionNumber": 4,
+                "sectionTitle": "Overcoming Doubts and Challenges",
+                "vocab": [],
+                "content": [],
+                "quiz": []
+              },
+              {
+                "sectionNumber": 5,
+                "sectionTitle": "Living with Strong Faith",
+                "vocab": [],
+                "content": [],
+                "quiz": []
               }
             ]
           }

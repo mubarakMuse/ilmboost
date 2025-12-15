@@ -6,7 +6,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { getCourseBySlug } from "../../courseUtils";
-import { hasActiveSession, isEnrolled, markSectionComplete, saveQuizScore, getUser } from "@/libs/auth";
+import { hasActiveSession, isEnrolled, markSectionComplete, saveQuizScore, getUser, hasActiveLicense } from "@/libs/auth";
 
 const CourseQuiz = () => {
   const params = useParams();
@@ -21,19 +21,54 @@ const CourseQuiz = () => {
   const [showResults, setShowResults] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [hasLicense, setHasLicense] = useState(false);
+  const [isCheckingLicense, setIsCheckingLicense] = useState(true);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [scoreSaved, setScoreSaved] = useState(false);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
 
   useEffect(() => {
-    const loggedIn = hasActiveSession();
-    setIsLoggedIn(loggedIn);
+    const checkAccess = async () => {
+      const loggedIn = hasActiveSession();
+      setIsLoggedIn(loggedIn);
+      
+      if (!loggedIn) {
+        setIsLoading(false);
+        setIsCheckingLicense(false);
+        return;
+      }
+      
+      // Check if user has a license (quizzes require license)
+      const user = getUser();
+      if (user?.id) {
+        try {
+          const response = await fetch(`/api/licenses/check?userId=${user.id}`);
+          const data = await response.json();
+          setHasLicense(data.success && data.hasLicense === true);
+        } catch (error) {
+          console.error('Error checking license:', error);
+          setHasLicense(false);
+        }
+      } else {
+        setHasLicense(false);
+      }
+      setIsCheckingLicense(false);
+    };
     
-    if (!loggedIn) {
+    checkAccess();
+  }, []);
+  
+  useEffect(() => {
+    // Wait for license check to complete
+    if (isCheckingLicense) return;
+    
+    // If not logged in or no license, stop loading and show appropriate message
+    if (!isLoggedIn || !hasLicense) {
       setIsLoading(false);
       return;
     }
 
+    // Load course data and questions
     if (slug) {
       const course = getCourseBySlug(slug);
       if (course) {
@@ -83,7 +118,7 @@ const CourseQuiz = () => {
       }
     }
     setIsLoading(false);
-  }, [slug, sectionFilter]);
+  }, [slug, sectionFilter, isCheckingLicense, isLoggedIn, hasLicense]);
 
   const handleAnswer = (questionId, answer) => {
     setAnswers((prev) => ({
@@ -197,6 +232,38 @@ const CourseQuiz = () => {
                 <div className="flex gap-4 justify-center">
                   <Link href="/login" className="btn btn-primary">
                     Login
+                  </Link>
+                  <Link href={`/courses/${slug}`} className="btn btn-outline">
+                    ← Back to Course
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  if (!hasLicense) {
+    return (
+      <>
+        <Header />
+        <main className="min-h-screen bg-base-100">
+          <div className="max-w-4xl mx-auto px-4 py-12">
+            <div className="card bg-base-100 shadow-lg">
+              <div className="card-body text-center">
+                <h1 className="text-2xl font-bold mb-4">License Required</h1>
+                <p className="text-base-content/70 mb-6">
+                  Quizzes are only available to licensed users. Please purchase a license or activate your license key to access quizzes.
+                </p>
+                <div className="flex gap-4 justify-center flex-wrap">
+                  <Link href="/membership" className="btn btn-primary">
+                    Purchase License
+                  </Link>
+                  <Link href="/account" className="btn btn-outline">
+                    Activate License Key
                   </Link>
                   <Link href={`/courses/${slug}`} className="btn btn-outline">
                     ← Back to Course

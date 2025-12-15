@@ -13,40 +13,66 @@ const config = {
     onlyShowOnRoutes: ["/"],
   },
   stripe: {
-    // Create multiple plans in your Stripe dashboard, then add them here. You can add as many plans as you want, just make sure to add the priceId
-    plans: [
+    // License-based plans - recurring subscriptions
+    licenses: [
       {
-        // REQUIRED — we use this to find the plan in the webhook (for instance if you want to update the user's credits based on the plan)
-        priceId: "price_1Se86WPDopHPTzRnRXsPLijv", // Monthly $10
-        //  REQUIRED - Name of the plan, displayed on the pricing page
-        name: "Monthly",
-        // A friendly description of the plan, displayed on the pricing page. Tip: explain why this plan and not others
-        description: "Full access to all courses - billed monthly",
-        // The price you want to display, the one user will be charged on Stripe.
-        price: 10,
-        // If you have an anchor price (i.e. $29) that you want to display crossed out, put it here. Otherwise, leave it empty
-        priceAnchor: 0,
+        // REQUIRED — Stripe Price ID for single user license (recurring annual)
+        priceId: "price_1SeezIPDopHPTzRnNZljrG6p", // TODO: Create in Stripe dashboard - Single User $50/year recurring
+        // REQUIRED - License type identifier
+        type: "single",
+        // REQUIRED - Name of the license, displayed on the pricing page
+        name: "Single User",
+        // A friendly description of the license
+        description: "Perfect for individual learners - annual subscription",
+        // The price you want to display
+        price: 50,
+        // Billing period
+        billingPeriod: "year",
+        // Maximum number of users for this license
+        maxUsers: 1,
+        // Features list
         features: [
-          { name: "Access to all courses" },
+          { name: "Access to all premium courses" },
           { name: "Full course content" },
           { name: "Advanced materials" },
           { name: "Priority support" },
-          { name: "Exclusive content" },
+          { name: "Annual subscription (recurring)" },
         ],
       },
       {
-        priceId: "price_1Se883PDopHPTzRncqkzihUI", // Yearly $100
-        name: "Yearly",
-        description: "Full access to all courses - best value, billed annually",
-        price: 100,
-        priceAnchor: 120, // Show $120 crossed out (10*12)
+        priceId: "price_1SeewtPDopHPTzRnIjb6KFEJ", // TODO: Create in Stripe dashboard - Family/Group $120/year recurring
+        type: "family",
+        name: "Family/Group",
+        description: "Up to 10 users - great value for families and small groups",
+        price: 120,
+        priceAnchor: 500, // Show $500 crossed out (10 * $50)
+        billingPeriod: "year",
+        maxUsers: 10,
         features: [
-          { name: "Access to all courses" },
+          { name: "Access for up to 10 users" },
+          { name: "All premium courses included" },
           { name: "Full course content" },
           { name: "Advanced materials" },
           { name: "Priority support" },
-          { name: "Exclusive content" },
-          { name: "Save $20 per year" },
+          { name: "Annual subscription (recurring)" },
+          { name: "Save $380 vs individual licenses" },
+        ],
+      },
+      {
+        priceId: "", // Contact admin for custom pricing
+        type: "organization",
+        name: "Organization/Large Group",
+        description: "Custom pricing for schools, organizations, and large groups",
+        price: 0, // Contact for pricing
+        billingPeriod: "year",
+        maxUsers: null, // Unlimited or custom
+        features: [
+          { name: "Custom user limit" },
+          { name: "All premium courses included" },
+          { name: "Bulk licensing discounts" },
+          { name: "Dedicated support" },
+          { name: "Custom terms available" },
+          { name: "Contact admin for pricing" },
         ],
       },
     ],
@@ -61,7 +87,7 @@ const config = {
     // REQUIRED — Email 'From' field to be used when sending magic login links
     fromNoReply: `Ilm Boost <mubarak014@gmail.com>`,
     // REQUIRED — Email 'From' field to be used when sending other emails, like abandoned carts, updates etc..
-    fromAdmin: `Marc at ShipFast <marc@resend.shipfa.st>`,
+    fromAdmin: `Ilm Boost <mubarak014@gmail.com>`,
     // Email shown to customer if need support. Leave empty if not needed => if empty, set up Crisp above, otherwise you won't be able to offer customer support."
     supportEmail: "mubarak014@gmail.com",
   },

@@ -54,8 +54,7 @@ export async function POST(req) {
   try {
     switch (eventType) {
       case "checkout.session.completed": {
-        // First payment is successful and a subscription is created
-        // ✅ Grant access to the product and update membership
+        // Payment is successful - could be subscription OR one-time license purchase
         const stripeObject = event.data.object;
 
         let session;
@@ -63,21 +62,149 @@ export async function POST(req) {
           session = await findCheckoutSession(stripeObject.id);
         } catch (error) {
           console.error("Error fetching checkout session:", error);
-          // Try to continue with data from stripeObject
           session = null;
         }
 
         const customerId = session?.customer || stripeObject.customer;
         const priceId = session?.line_items?.data[0]?.price.id || stripeObject.display_items?.[0]?.price?.id;
         const subscriptionId = session?.subscription || stripeObject.subscription;
-        const clientReferenceId = stripeObject.client_reference_id; // userId or email
+        const clientReferenceId = stripeObject.client_reference_id; // userId
+        const paymentMode = stripeObject.mode; // 'payment' for one-time, 'subscription' for recurring
         
         if (!priceId) {
           console.error("No priceId found in session or stripeObject");
           break;
         }
+
+        // Check if this is a license subscription
+        const isLicenseSubscription = paymentMode === 'subscription' || stripeObject.metadata?.type === 'license';
         
-        const plan = configFile.stripe.plans.find((p) => p.priceId === priceId);
+        if (isLicenseSubscription) {
+          // Handle license subscription
+          const licenseType = stripeObject.metadata?.licenseType || 'single';
+          const licenseConfig = {
+            single: { maxUsers: 1 },
+            family: { maxUsers: 10 },
+            organization: { maxUsers: null }
+          };
+          
+          const config = licenseConfig[licenseType] || licenseConfig.single;
+          
+          // Find user
+          const { data: user } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", clientReferenceId)
+            .maybeSingle();
+          
+          if (!user) {
+            console.error("User not found for license subscription:", clientReferenceId);
+            break;
+          }
+          
+          // Generate license key from user info: FirstInitial + LastInitial + Last4DigitsOfPhone + YearOfBirth
+          const generateLicenseKey = (firstName, lastName, phone, dobYear) => {
+            const firstInitial = (firstName || 'X').charAt(0).toUpperCase();
+            const lastInitial = (lastName || 'X').charAt(0).toUpperCase();
+            
+            // Extract last 4 digits of phone (remove all non-digits first)
+            const phoneDigits = (phone || '').replace(/\D/g, '');
+            const phoneLast4 = phoneDigits.slice(-4).padStart(4, '0');
+            
+            // Get birth year (4 digits)
+            const birthYear = (dobYear || 0).toString().padStart(4, '0').slice(-4);
+            
+            return firstInitial + lastInitial + phoneLast4 + birthYear;
+          };
+          
+          const licenseKey = generateLicenseKey(user.first_name, user.last_name, user.phone, user.dob_year);
+          
+          // Check if license key already exists, if so add a suffix
+          let finalLicenseKey = licenseKey;
+          let keySuffix = 1;
+          while (keySuffix <= 99) {
+            const { data: existingKey } = await supabase
+              .from("licenses")
+              .select("id")
+              .eq("license_key", finalLicenseKey)
+              .maybeSingle();
+            
+            if (!existingKey) break;
+            
+            finalLicenseKey = licenseKey + String(keySuffix).padStart(2, '0');
+            keySuffix++;
+          }
+          
+          // Check if license already exists for this user and subscription
+          const { data: existingLicense } = await supabase
+            .from("licenses")
+            .select("*")
+            .eq("user_id", user.id)
+            .eq("stripe_subscription_id", subscriptionId)
+            .maybeSingle();
+          
+          if (existingLicense) {
+            // Extend expiration by 1 year from now
+            const expiresAt = new Date();
+            expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+            
+            // Update existing license (preserve existing license key)
+            await supabase
+              .from("licenses")
+              .update({
+                status: 'active',
+                expires_at: expiresAt.toISOString(),
+                stripe_customer_id: customerId,
+                stripe_price_id: priceId,
+                updated_at: new Date().toISOString()
+              })
+              .eq("id", existingLicense.id);
+            
+            console.log(`License updated for user ${user.id}: ${licenseType} license`);
+          } else {
+            // Create new license (annual subscription - expires 1 year from now, but renews automatically)
+            // Set expiration date for tracking, but subscription will renew automatically
+            const expiresAt = new Date();
+            expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+            
+            const { data: license, error: licenseError } = await supabase
+              .from("licenses")
+              .insert({
+                user_id: user.id,
+                license_type: licenseType,
+                license_key: finalLicenseKey, // Generated from user info
+                status: 'active',
+                max_users: config.maxUsers,
+                expires_at: expiresAt.toISOString(), // Set 1 year expiration, but renews with subscription
+                activated_at: new Date().toISOString(),
+                stripe_subscription_id: subscriptionId,
+                stripe_customer_id: customerId,
+                stripe_price_id: priceId
+              })
+              .select()
+              .single();
+            
+            if (licenseError) {
+              console.error("Failed to create license:", licenseError);
+              break;
+            }
+            
+            // Add user to license_users table (for single user licenses, they're the owner)
+            await supabase
+              .from("license_users")
+              .insert({
+                license_id: license.id,
+                user_id: user.id,
+                added_by: user.id
+              });
+            
+            console.log(`License created for user ${user.id}: ${licenseType} license with key ${finalLicenseKey}`);
+          }
+          break;
+        }
+        
+        // Handle subscription (legacy support)
+        const plan = configFile.stripe.plans?.find((p) => p.priceId === priceId);
 
         if (!plan) {
           console.error("Plan not found for priceId:", priceId);
@@ -208,39 +335,49 @@ export async function POST(req) {
 
       case "invoice.paid": {
         // Customer just paid an invoice (recurring payment for subscription)
-        // ✅ Ensure membership is still active
+        // ✅ Ensure license is still active and extend expiration
         const stripeObject = event.data.object;
         const priceId = stripeObject.lines.data[0].price.id;
         const customerId = stripeObject.customer;
+        const subscriptionId = stripeObject.subscription;
 
-        // Find profile by Stripe customer ID
+        // Extend expiration by 1 year from now
+        const expiresAt = new Date();
+        expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+
+        // Update license status to active and extend expiration (renewal payment)
+        await supabase
+          .from("licenses")
+          .update({ 
+            status: 'active',
+            expires_at: expiresAt.toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq("stripe_subscription_id", subscriptionId);
+
+        // Also update legacy membership if exists
         const { data: profile } = await supabase
           .from("profiles")
           .select("*")
           .eq("stripe_customer_id", customerId)
-          .single();
+          .maybeSingle();
 
-        if (!profile) {
-          console.error("Profile not found for customer:", customerId);
-          break;
+        if (profile) {
+          // Determine membership tier from priceId (legacy support)
+          const plan = configFile.stripe.plans?.find((p) => p.priceId === priceId);
+          if (plan) {
+            const membershipTier = plan.name === "Yearly" ? "yearly" : plan.name === "Monthly" ? "monthly" : "paid";
+            await supabase
+              .from("profiles")
+              .update({ 
+                membership: membershipTier,
+                updated_at: new Date().toISOString()
+              })
+              .eq("stripe_customer_id", customerId);
+          }
         }
 
-        // Determine membership tier from priceId
-        const plan = configFile.stripe.plans.find((p) => p.priceId === priceId);
-        if (!plan) break;
-
-        const membershipTier = plan.name === "Yearly" ? "yearly" : plan.name === "Monthly" ? "monthly" : "paid";
-
-        // Update membership to ensure it's still active
-        await supabase
-          .from("profiles")
-          .update({ 
-            membership: membershipTier,
-            updated_at: new Date().toISOString()
-          })
-          .eq("stripe_customer_id", customerId);
-
-        console.log(`Recurring payment processed for customer ${customerId}`);
+        console.log(`Recurring payment processed for subscription ${subscriptionId}`);
         break;
       }
 

@@ -3,21 +3,34 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { hasActiveSession, getUser, logout } from "@/libs/auth";
+import { hasActiveSession, getUser, logout, hasActiveLicense } from "@/libs/auth";
 
 export default function AuthButton({ extraStyle = "" }) {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [hasLicense, setHasLicense] = useState(false);
 
   useEffect(() => {
-    if (hasActiveSession()) {
-      setIsLoggedIn(true);
-      setUser(getUser());
-    } else {
-      setIsLoggedIn(false);
-      setUser(null);
-    }
+    const checkLicense = async () => {
+      if (hasActiveSession()) {
+        setIsLoggedIn(true);
+        const userData = getUser();
+        setUser(userData);
+        
+        // Check if user has a license
+        if (userData?.id) {
+          const licenseCheck = await hasActiveLicense();
+          setHasLicense(licenseCheck);
+        }
+      } else {
+        setIsLoggedIn(false);
+        setUser(null);
+        setHasLicense(false);
+      }
+    };
+    
+    checkLicense();
   }, []);
 
   const handleLogout = () => {
@@ -37,6 +50,11 @@ export default function AuthButton({ extraStyle = "" }) {
           <li>
             <Link href="/dashboard">Dashboard</Link>
           </li>
+          {hasLicense && (
+            <li>
+              <Link href="/benefits">Member Benefits</Link>
+            </li>
+          )}
           <li>
             <Link href="/account">Account Settings</Link>
           </li>

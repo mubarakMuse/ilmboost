@@ -13,7 +13,7 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { userId, sessionId } = body;
+    const { userId, sessionId, licenseType } = body;
 
     if (!userId) {
       return NextResponse.json(
@@ -68,6 +68,35 @@ export async function POST(req) {
       console.log("No sessionId provided, skipping Stripe verification");
     }
 
+    // Check if this is a license purchase
+    if (licenseType) {
+      // Check if license was created
+      const { data: license } = await supabase
+        .from("licenses")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("license_type", licenseType)
+        .eq("status", "active")
+        .order("purchased_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
+      if (license) {
+        return NextResponse.json({ 
+          success: true, 
+          hasLicense: true,
+          license: license,
+          message: "License activated successfully."
+        });
+      } else {
+        return NextResponse.json({ 
+          success: true, 
+          hasLicense: false,
+          message: "Payment verified. License activation may take a moment."
+        });
+      }
+    }
+    
     // Return success - webhook will update membership if payment was successful
     console.log("Payment verification for user:", userId, "Current membership:", profile.membership);
     

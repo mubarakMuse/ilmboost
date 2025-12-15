@@ -1,5 +1,42 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import coursesData from "@/app/courses/courses.json";
+
+// Helper to check if course is premium
+function isPremiumCourse(courseId) {
+  const course = coursesData.courses?.find(c => c.courseID === courseId);
+  return course?.premium === true;
+}
+
+// Helper to check if user has active license
+async function hasActiveLicense(supabase, userId) {
+  const now = new Date().toISOString();
+  
+  // Check if user owns an active license
+  const { data: ownedLicense } = await supabase
+    .from('licenses')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('status', 'active')
+    .gt('expires_at', now)
+    .maybeSingle();
+  
+  if (ownedLicense) return true;
+  
+  // Check if user is part of a shared license
+  const { data: sharedLicense } = await supabase
+    .from('license_users')
+    .select('licenses!inner(id, status, expires_at)')
+    .eq('user_id', userId)
+    .maybeSingle();
+  
+  if (sharedLicense?.licenses) {
+    const license = sharedLicense.licenses;
+    return license.status === 'active' && new Date(license.expires_at) > new Date(now);
+  }
+  
+  return false;
+}
 
 export async function POST(req) {
   try {
@@ -44,6 +81,21 @@ export async function POST(req) {
         { success: false, error: "User not found" },
         { status: 404 }
       );
+    }
+
+    // Check if course is premium and user has license
+    if (isPremiumCourse(courseId)) {
+      const hasLicense = await hasActiveLicense(supabase, userId);
+      if (!hasLicense) {
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: "License required",
+            message: "This is a premium course. Please purchase or activate a license to enroll."
+          },
+          { status: 403 }
+        );
+      }
     }
 
     // Check if already enrolled

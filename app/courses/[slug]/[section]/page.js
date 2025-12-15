@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getCourseBySlug, getCourseImageUrl } from "../../courseUtils";
-import { hasActiveSession, isEnrolled, getCourseProgress, markSectionComplete, markSectionIncomplete } from "@/libs/auth";
+import { getCourseBySlug, getCourseImageUrl, isPremiumCourse } from "../../courseUtils";
+import { hasActiveSession, isEnrolled, getCourseProgress, markSectionComplete, markSectionIncomplete, hasActiveLicense, canAccessCourse } from "@/libs/auth";
 
 const SectionPage = () => {
   const params = useParams();
@@ -19,6 +19,8 @@ const SectionPage = () => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [hasLicense, setHasLicense] = useState(false);
+  const [canAccess, setCanAccess] = useState(true);
   const [currentContentIndex, setCurrentContentIndex] = useState(0);
 
   useEffect(() => {
@@ -44,6 +46,19 @@ const SectionPage = () => {
 
     if (loggedIn) {
       const checkEnrollment = async () => {
+        // Check if course is premium and user has license
+        const isPremium = isPremiumCourse(course);
+        if (isPremium) {
+          const licenseCheck = await hasActiveLicense();
+          setHasLicense(licenseCheck);
+          const access = await canAccessCourse(course.courseID);
+          setCanAccess(access);
+          if (!access) {
+            setIsLoading(false);
+            return;
+          }
+        }
+        
         const isEnrolledInCourse = await isEnrolled(course.courseID);
         setEnrolled(isEnrolledInCourse);
 
@@ -332,7 +347,24 @@ const SectionPage = () => {
             </div>
           )}
 
-          {isLoggedIn && !enrolled && (
+          {isLoggedIn && !canAccess && (
+            <div className="alert alert-error mb-6">
+              <div>
+                <h3 className="font-bold text-sm">License Required</h3>
+                <p className="text-xs">This is a premium course. Please purchase a license or activate your license key to access this content.</p>
+                <div className="flex gap-2 mt-3">
+                  <Link href="/membership" className="btn btn-sm btn-primary">
+                    Purchase License
+                  </Link>
+                  <Link href="/account" className="btn btn-sm btn-outline">
+                    Activate License Key
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {isLoggedIn && !enrolled && canAccess && (
             <div className="alert alert-warning mb-6">
               <div>
                 <h3 className="font-bold text-sm">Enrollment Required</h3>

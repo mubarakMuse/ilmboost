@@ -6,8 +6,9 @@ import { useParams, useRouter } from "next/navigation";
 import CourseImage from "../components/CourseImage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getCourseBySlug, getCourseImageUrl } from "../courseUtils";
-import { hasActiveSession, isEnrolled, getCourseProgress, markSectionComplete, markSectionIncomplete, getCourseProgressPercentage, enrollInCourse, getQuizScore } from "@/libs/auth";
+import { getCourseBySlug, getCourseImageUrl, isPremiumCourse } from "../courseUtils";
+import { hasActiveSession, isEnrolled, getCourseProgress, markSectionComplete, markSectionIncomplete, getCourseProgressPercentage, enrollInCourse, getQuizScore, canAccessCourse, hasActiveLicense } from "@/libs/auth";
+import toast from "react-hot-toast";
 
 const CoursePage = () => {
   const params = useParams();
@@ -21,6 +22,8 @@ const CoursePage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [highScore, setHighScore] = useState(null);
+  const [hasLicense, setHasLicense] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -40,9 +43,14 @@ const CoursePage = () => {
     status: courseDataRaw.status || "Available Now",
     whatYouWillLearn: courseDataRaw.whatYouWillLearn || [],
       sections: courseDataRaw.sections || [],
+      premium: courseDataRaw.premium || false, // Ensure premium field is included
     };
 
     setCourseData(course);
+    
+    // Check if course is premium - use the raw course data to check
+    const premium = isPremiumCourse(courseDataRaw);
+    setIsPremium(premium);
     
     // Check if logged in
     const loggedIn = hasActiveSession();
@@ -50,6 +58,16 @@ const CoursePage = () => {
     
     if (loggedIn) {
       const checkEnrollment = async () => {
+        // Check if user has license (for premium courses)
+        if (premium) {
+          const licenseCheck = await hasActiveLicense();
+          setHasLicense(licenseCheck);
+          if (!licenseCheck) {
+            setIsLoading(false);
+            return;
+          }
+        }
+        
         const isEnrolledInCourse = await isEnrolled(course.courseID);
         setEnrolled(isEnrolledInCourse);
 
@@ -169,9 +187,16 @@ const CoursePage = () => {
               </div>
             )}
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold mb-3 text-base-content">
-                {courseData.courseTitle}
-              </h1>
+              <div className="flex items-center gap-3 mb-3 flex-wrap">
+                <h1 className="text-2xl md:text-3xl font-bold text-base-content">
+                  {courseData.courseTitle}
+                </h1>
+                {isPremium ? (
+                  <span className="badge bg-[#F5E6D3] text-black border-0">Premium</span>
+                ) : (
+                  <span className="badge bg-gray-200 text-gray-700 border-0">Free</span>
+                )}
+              </div>
               <p className="text-sm md:text-base text-base-content/70 leading-relaxed">
                 {courseData.courseDescription}
               </p>
@@ -195,12 +220,41 @@ const CoursePage = () => {
               </div>
             )}
 
+            {/* Premium course - License required (shown before enroll button) */}
+            {isLoggedIn && isPremium && !hasLicense && !enrolled && (
+              <div className="mt-6 alert alert-warning">
+                <div>
+                  <h3 className="font-bold text-sm">Premium Course - License Required</h3>
+                  <div className="text-xs mt-2">
+                    This is a premium course that requires an active license. Please purchase a license or activate your license key to enroll.
+                  </div>
+                  <div className="flex gap-2 mt-3">
+                    <Link href="/membership" className="btn btn-sm btn-primary">
+                      Purchase License
+                    </Link>
+                    <Link href="/account" className="btn btn-sm btn-outline">
+                      Activate License Key
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Enroll button if not enrolled but logged in */}
-            {isLoggedIn && !enrolled && isAvailable && (
+            {isLoggedIn && !enrolled && isAvailable && !(isPremium && !hasLicense) && (
               <div className="mt-6">
                 <button
                   onClick={async () => {
-                    await enrollInCourse(courseData.courseID);
+                    const result = await enrollInCourse(courseData.courseID);
+                    if (!result.success) {
+                      if (result.error === 'License required' || result.message) {
+                        toast.error(result.message || 'This is a premium course. A license is required to enroll.');
+                      } else {
+                        toast.error(result.error || 'Failed to enroll. Please try again.');
+                      }
+                      return;
+                    }
+                    toast.success('Successfully enrolled in course!');
                     setEnrolled(true);
                     const courseProgress = await getCourseProgress(courseData.courseID);
                     setProgress(courseProgress);
