@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
 import Stripe from "stripe";
 import config from "@/config";
 
@@ -7,6 +8,7 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const { userId, licenseType } = body;
+    const cookieStore = await cookies();
 
     if (!userId || !licenseType) {
       return NextResponse.json(
@@ -76,6 +78,10 @@ export async function POST(req) {
       );
     }
 
+    // Get DataFast cookies for revenue attribution
+    const datafastVisitorId = cookieStore.get('datafast_visitor_id')?.value;
+    const datafastSessionId = cookieStore.get('datafast_session_id')?.value;
+    
     // Create Stripe checkout session (recurring subscription)
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -92,7 +98,9 @@ export async function POST(req) {
       metadata: {
         userId,
         licenseType,
-        type: 'license'
+        type: 'license',
+        ...(datafastVisitorId && { datafast_visitor_id: datafastVisitorId }),
+        ...(datafastSessionId && { datafast_session_id: datafastSessionId }),
       }
     });
 

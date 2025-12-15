@@ -1,10 +1,12 @@
 import { createCheckout } from "@/libs/stripe";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import config from "@/config";
 
 // This function is used to create a Stripe Checkout Session for membership subscription
 export async function POST(req) {
   const body = await req.json();
+  const cookieStore = await cookies();
 
   if (!body.email && !body.userId) {
     return NextResponse.json(
@@ -47,6 +49,10 @@ export async function POST(req) {
     // Use userId if provided, otherwise use email
     const clientReferenceId = body.userId || body.email;
     
+    // Get DataFast cookies for revenue attribution
+    const datafastVisitorId = cookieStore.get('datafast_visitor_id')?.value;
+    const datafastSessionId = cookieStore.get('datafast_session_id')?.value;
+    
     const stripeSessionURL = await createCheckout({
       priceId,
       mode: "subscription",
@@ -55,6 +61,10 @@ export async function POST(req) {
       clientReferenceId: clientReferenceId, // Use userId or email as reference
       user: {
         email: body.email,
+      },
+      metadata: {
+        ...(datafastVisitorId && { datafast_visitor_id: datafastVisitorId }),
+        ...(datafastSessionId && { datafast_session_id: datafastSessionId }),
       },
     });
 

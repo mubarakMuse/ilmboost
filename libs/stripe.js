@@ -9,6 +9,7 @@ export const createCheckout = async ({
   couponId,
   clientReferenceId,
   user,
+  metadata,
 }) => {
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error("STRIPE_SECRET_KEY is not set in environment variables");
@@ -52,6 +53,7 @@ export const createCheckout = async ({
       : [],
     success_url: successUrl,
     cancel_url: cancelUrl,
+    metadata: metadata || {},
     ...extraParams,
   });
 
