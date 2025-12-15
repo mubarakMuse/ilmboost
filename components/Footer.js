@@ -54,11 +54,6 @@ const Footer = () => {
                     Support
                   </a>
                 )}
-                
-                <Link href="/blog" className="link link-hover">
-                  Blog
-                </Link>
-              
               </div>
             </div>
 

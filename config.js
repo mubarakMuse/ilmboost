@@ -3,7 +3,7 @@ const config = {
   appName: "Ilm Boost",
   // REQUIRED: a short description of your app for SEO tags (can be overwritten)
   appDescription:
-    "The complete Online Learning Experience For every Muslim.",
+    "Make authentic Islamic knowledge more accessible. Ilm Boost offers comprehensive online Islamic studies courses for every Muslim learner.",
   // REQUIRED (no https://, not trialing slash at the end, just the naked domain)
   domainName: "ilmboost.com",
   crisp: {
