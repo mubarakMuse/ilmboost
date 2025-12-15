@@ -78,35 +78,41 @@ function SignupContent() {
       return;
     }
 
-    // Signup
-    const result = signup({
-      email: formData.email,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phone: formData.phone,
-      dobMonth: formData.dobMonth,
-      dobYear: formData.dobYear,
-      pin: formData.pin,
-      secretAnswer: formData.secretAnswer,
-      membership: formData.membership
-    });
+    try {
+      // Signup - await the async function
+      const result = await signup({
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        dobMonth: formData.dobMonth,
+        dobYear: formData.dobYear,
+        pin: formData.pin,
+        secretAnswer: formData.secretAnswer,
+        membership: formData.membership
+      });
 
-    if (result.success) {
-      // If user selected paid membership, redirect to checkout
-      if (formData.membership === 'monthly' || formData.membership === 'yearly') {
-        // Redirect to checkout with selected plan
-        setTimeout(() => {
-          router.push(`/membership?plan=${formData.membership}`);
-        }, 100);
+      if (result.success) {
+        // If user selected paid membership, redirect to checkout
+        if (formData.membership === 'monthly' || formData.membership === 'yearly') {
+          // Redirect to checkout with selected plan
+          setTimeout(() => {
+            router.push(`/membership?plan=${formData.membership}`);
+          }, 100);
+        } else {
+          // Free membership - go to dashboard
+          setTimeout(() => {
+            router.push('/dashboard');
+            router.refresh(); // Refresh to ensure state is updated
+          }, 100);
+        }
       } else {
-        // Free membership - go to dashboard
-        setTimeout(() => {
-          router.push('/dashboard');
-          router.refresh(); // Refresh to ensure state is updated
-        }, 100);
+        setError(result.error || 'Signup failed. Please try again.');
+        setIsLoading(false);
       }
-    } else {
-      setError(result.error || 'Signup failed. Please try again.');
+    } catch (error) {
+      console.error('Signup error:', error);
+      setError('Signup failed. Please try again.');
       setIsLoading(false);
     }
   };
