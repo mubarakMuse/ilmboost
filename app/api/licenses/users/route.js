@@ -48,21 +48,25 @@ export async function GET(req) {
       );
     }
 
-    // Get all users on this license
+    // Get all users on this license (excluding the owner who is in licenses.user_id)
+    // Use profiles!license_users_user_id_fkey to specify we want the user's profile, not the added_by profile
+    // IMPORTANT: Exclude the owner from license_users count since they're already counted as the owner
     const { data: licenseUsers, error } = await supabase
       .from('license_users')
       .select(`
         id,
         user_id,
         added_at,
-        profiles (
+        profiles!license_users_user_id_fkey (
           id,
           email,
           first_name,
           last_name
         )
       `)
-      .eq('license_id', licenseId);
+      .eq('license_id', licenseId)
+      .neq('user_id', license.user_id) // Exclude the owner from the list
+      .order('added_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching license users:', error);
@@ -71,6 +75,9 @@ export async function GET(req) {
         { status: 500 }
       );
     }
+
+    // Debug logging
+    console.log(`License ${licenseId}: Found ${licenseUsers?.length || 0} users in license_users table`);
 
     // Get owner info
     const { data: owner } = await supabase

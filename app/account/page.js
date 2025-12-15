@@ -40,6 +40,7 @@ export default function AccountPage() {
   const [isCheckingLicense, setIsCheckingLicense] = useState(true);
   const [isLicenseOwner, setIsLicenseOwner] = useState(false);
   const [licenseUsers, setLicenseUsers] = useState([]);
+  const [currentUserCount, setCurrentUserCount] = useState(null);
   
   // License activation
   const [licenseKey, setLicenseKey] = useState("");
@@ -113,6 +114,8 @@ export default function AccountPage() {
         const data = await response.json();
         if (data.success) {
           setLicenseUsers(data.users || []);
+          // Use the API's calculated count which includes the owner
+          setCurrentUserCount(data.currentUsers || (data.users?.length || 0) + 1);
         }
       } catch (error) {
         console.error('Error loading license users:', error);
@@ -302,6 +305,7 @@ export default function AccountPage() {
             const usersData = await usersResponse.json();
             if (usersData.success) {
               setLicenseUsers(usersData.users || []);
+              setCurrentUserCount(usersData.currentUsers || (usersData.users?.length || 0) + 1);
             }
           }
         } else {
@@ -677,7 +681,7 @@ export default function AccountPage() {
                           <div className="space-y-2 mb-4">
                             <div className="flex items-center justify-between text-sm">
                               <span>Total Users:</span>
-                              <span className="font-semibold">{licenseUsers.length + 1} / {license.max_users || 'Unlimited'}</span>
+                              <span className="font-semibold">{currentUserCount !== null ? currentUserCount : (licenseUsers.length + 1)} / {license.max_users || 'Unlimited'}</span>
                             </div>
                             {license.license_key && (
                               <div className="bg-base-100 rounded p-3">
