@@ -3,7 +3,7 @@ const config = {
   appName: "Ilm Boost",
   // REQUIRED: a short description of your app for SEO tags (can be overwritten)
   appDescription:
-    "Make authentic Islamic knowledge more accessible. Ilm Boost offers comprehensive online Islamic studies courses for every Muslim learner.",
+    "Making authentic Islamic knowledge more accessible. Ilm Boost offers comprehensive online Islamic studies courses for every Muslim learner.",
   // REQUIRED (no https://, not trialing slash at the end, just the naked domain)
   domainName: "ilmboost.com",
   crisp: {
@@ -17,7 +17,7 @@ const config = {
     licenses: [
       {
         // REQUIRED — Stripe Price ID for single user license (recurring annual)
-        priceId: "price_1SeezIPDopHPTzRnNZljrG6p", // TODO: Create in Stripe dashboard - Single User $50/year recurring
+        priceId: "price_1SeholAVq3ofAihNHh0RJxqt", // TODO: Create in Stripe dashboard - Single User $50/year recurring
         // REQUIRED - License type identifier
         type: "single",
         // REQUIRED - Name of the license, displayed on the pricing page
@@ -40,7 +40,7 @@ const config = {
         ],
       },
       {
-        priceId: "price_1SeewtPDopHPTzRnIjb6KFEJ", // TODO: Create in Stripe dashboard - Family/Group $120/year recurring
+        priceId: "price_1SehpYAVq3ofAihNAX1sY7F6", // TODO: Create in Stripe dashboard - Family/Group $120/year recurring
         type: "family",
         name: "Family/Group",
         description: "Up to 10 users - great value for families and small groups",

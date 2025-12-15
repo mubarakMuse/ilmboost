@@ -47,7 +47,7 @@ export default function LandingPage() {
             "@context": "https://schema.org",
             "@type": "EducationalOrganization",
             name: "Ilm Boost",
-            description: "Make authentic Islamic knowledge more accessible. Ilm Boost offers comprehensive online Islamic studies courses for every Muslim learner.",
+            description: "Making authentic Islamic knowledge more accessible. Ilm Boost offers comprehensive online Islamic studies courses for every Muslim learner.",
             url: `https://${config.domainName}`,
             logo: `https://${config.domainName}/icon.png`,
             sameAs: [],

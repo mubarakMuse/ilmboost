@@ -2497,7 +2497,7 @@
             "courseTitle": "Fundamentals of Qur'an Exegesis (Usūl al-Tafsīr)",
             "courseImage": "./app/islamic-studies/images/fundamentals-of-quran-exegesis-image.png",
             "courseImageAlt": "Fundamentals of Qur'an Exegesis (Usūl al-Tafsīr)",
-            "status": "coming soon",
+            "status": "Available Now",
             "courseDescription": " The core principles, methodologies, and tools used to correctly understand and interpret the meanings of the Qur'an.",
             "whatYouWillLearn": [
               "The definition and distinction between Tafsīr (exegesis) and Ta'wīl (interpretation).",
@@ -2764,7 +2764,7 @@
             "courseTitle": "Foundations of Hadith Terminology (Mustalah al-Hadith)",
             "courseImage": "./app/islamic-studies/images/foundations-of-hadith-terminology.png",
             "courseImageAlt": "Foundations of Hadith Terminology (Mustalah al-Hadith)",
-            "status": "coming soon",
+            "status": "Available Now",
             "courseDescription": "A foundational course introducing the specialized science of Mustalah al-Hadith, which established the criteria for authenticating, classifying, and preserving the Prophetic tradition (Sunnah).",
             "whatYouWillLearn": [
               "The definition and distinction between Hadith, Sunnah, and related technical terms.",

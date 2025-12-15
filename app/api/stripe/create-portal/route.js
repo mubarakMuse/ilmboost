@@ -40,7 +40,7 @@ export async function POST(req) {
       return NextResponse.json(
         {
           error:
-            "You don't have a billing account yet. Make a purchase first.",
+            "You don't have a billing account yet. Purchase a license first.",
         },
         { status: 400 }
       );
