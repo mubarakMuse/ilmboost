@@ -6,7 +6,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { hasActiveSession, getUser, isEnrolled, enrollInCourse, unenrollFromCourse, getCourseProgress, getCourseProgressPercentage } from "@/libs/auth";
-import { getAllCourses, getCourseImageUrl, isPremiumCourse } from "../courses/courseUtils";
+import { getAllCoursesMetadata, getCourseImageUrl, isPremiumCourse } from "../courses/courseUtils";
 import CourseImage from "../courses/components/CourseImage";
 
 export default function DashboardPage() {
@@ -46,7 +46,7 @@ export default function DashboardPage() {
       }
 
       setUser(userData);
-      const allCourses = getAllCourses();
+      const allCourses = getAllCoursesMetadata();
       setCourses(allCourses);
       
       // Check enrollment status and progress for each course (async)
@@ -59,7 +59,7 @@ export default function DashboardPage() {
         
         if (enrolled) {
           const progress = await getCourseProgress(course.courseID);
-          const totalSections = course.sections?.length || 0;
+          const totalSections = course.sectionCount || 0;
           const progressPercentage = totalSections > 0 
             ? await getCourseProgressPercentage(course.courseID, totalSections)
             : 0;
@@ -134,7 +134,7 @@ export default function DashboardPage() {
               {courses.map((course) => {
                 const enrolled = enrollments[course.courseID] || false;
                 const isAvailable = course.status === "Available Now";
-                const totalSections = course.sections?.length || 0;
+                const totalSections = course.sectionCount || 0;
                 const progressInfo = courseProgress[course.courseID] || null;
                 const progress = progressInfo?.progress || null;
                 const progressPercentage = progressInfo?.progressPercentage || 0;

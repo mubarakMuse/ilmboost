@@ -8,14 +8,14 @@ import Script from "next/script";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import config from "@/config";
-import { getAllCourses, getCourseImageUrl, isPremiumCourse } from "./courses/courseUtils";
+import { getAllCoursesMetadata, getCourseImageUrl, isPremiumCourse } from "./courses/courseUtils";
 import CourseImage from "./courses/components/CourseImage";
 import { hasActiveSession } from "@/libs/auth";
 import logo from "@/app/icon.png";
 
 export default function LandingPage() {
   const router = useRouter();
-  const courses = getAllCourses();
+  const courses = getAllCoursesMetadata();
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function LandingPage() {
               availability: "https://schema.org/InStock",
               description: "Free Islamic courses available"
             },
-            course: getAllCourses().slice(0, 10).map(course => ({
+            course: getAllCoursesMetadata().slice(0, 10).map(course => ({
               "@type": "Course",
               name: course.courseTitle,
               description: course.courseDescription,

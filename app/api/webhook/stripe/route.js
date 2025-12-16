@@ -160,7 +160,6 @@ export async function POST(req) {
               })
               .eq("id", existingLicense.id);
             
-            console.log(`License updated for user ${user.id}: ${licenseType} license`);
           } else {
             // Create new license (annual subscription - expires 1 year from now, but renews automatically)
             // Set expiration date for tracking, but subscription will renew automatically
@@ -198,7 +197,6 @@ export async function POST(req) {
                 added_by: user.id
               });
             
-            console.log(`License created for user ${user.id}: ${licenseType} license with key ${finalLicenseKey}`);
           }
           break;
         }
@@ -276,7 +274,6 @@ export async function POST(req) {
           console.error("Failed to update profile:", error);
           // If it's a column error, try updating without Stripe fields
           if (error.code === 'PGRST204' || error.message?.includes('column')) {
-            console.log("Stripe columns may not exist, updating membership only");
             const { error: membershipError } = await supabase
               .from("profiles")
               .update({
@@ -294,7 +291,6 @@ export async function POST(req) {
           }
         }
 
-        console.log(`Membership updated to ${membershipTier} for user ${user.id}`);
 
         break;
       }
@@ -329,7 +325,6 @@ export async function POST(req) {
           })
           .eq("stripe_customer_id", subscription.customer);
         
-        console.log(`Subscription cancelled for customer ${subscription.customer}`);
         break;
       }
 
@@ -377,7 +372,6 @@ export async function POST(req) {
           }
         }
 
-        console.log(`Recurring payment processed for subscription ${subscriptionId}`);
         break;
       }
 

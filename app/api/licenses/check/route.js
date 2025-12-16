@@ -98,11 +98,7 @@ export async function GET(req) {
     }
 
     // Debug logging (remove in production if needed)
-    if (process.env.NODE_ENV === 'development') {
-      console.log('License check for user:', userId);
-      console.log('Has active license:', hasActiveLicense);
-      console.log('License data:', license);
-    }
+ 
 
     return NextResponse.json({ 
       success: true,

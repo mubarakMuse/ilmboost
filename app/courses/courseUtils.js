@@ -1,30 +1,67 @@
 import coursesData from './courses.json';
 
+// Cache the courses data to avoid re-parsing
+let coursesCache = null;
+let coursesMetadataCache = null;
+
 /**
- * Get all courses from the catalog
- * @returns {Array} Array of all courses
+ * Get all courses from the catalog (full data with sections)
+ * @returns {Array} Array of all courses with complete data
  */
 export function getAllCourses() {
-  return coursesData.courses || [];
+  if (coursesCache) return coursesCache;
+  coursesCache = coursesData.courses || [];
+  return coursesCache;
 }
 
 /**
- * Get a course by its slug
+ * Get lightweight course metadata (without sections, vocab, content, quiz)
+ * Use this for listings to improve performance
+ * @returns {Array} Array of course metadata objects
+ */
+export function getAllCoursesMetadata() {
+  if (coursesMetadataCache) return coursesMetadataCache;
+  
+  const courses = coursesData.courses || [];
+  coursesMetadataCache = courses.map(course => ({
+    courseID: course.courseID,
+    courseSlug: course.courseSlug,
+    type: course.type,
+    estimatedTime: course.estimatedTime,
+    teacher: course.teacher,
+    courseTitle: course.courseTitle,
+    courseImage: course.courseImage,
+    courseImageAlt: course.courseImageAlt,
+    status: course.status || 'Available Now',
+    courseDescription: course.courseDescription,
+    whatYouWillLearn: course.whatYouWillLearn || [],
+    premium: course.premium || false,
+    // Include section count for progress calculations, but not full sections
+    sectionCount: course.sections?.length || 0,
+  }));
+  
+  return coursesMetadataCache;
+}
+
+/**
+ * Get a course by its slug (full data)
+ * Optimized to search directly without loading all courses first
  * @param {string} slug - The course slug
  * @returns {Object|null} The course object or null if not found
  */
 export function getCourseBySlug(slug) {
-  const courses = getAllCourses();
+  const courses = coursesData.courses || [];
   return courses.find(course => course.courseSlug === slug) || null;
 }
 
 /**
- * Get a course by its ID
+ * Get a course by its ID (full data)
+ * Optimized to search directly without loading all courses first
  * @param {string} courseID - The course ID
  * @returns {Object|null} The course object or null if not found
  */
 export function getCourseById(courseID) {
-  const courses = getAllCourses();
+  const courses = coursesData.courses || [];
   return courses.find(course => course.courseID === courseID) || null;
 }
 

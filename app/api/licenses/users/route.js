@@ -77,7 +77,6 @@ export async function GET(req) {
     }
 
     // Debug logging
-    console.log(`License ${licenseId}: Found ${licenseUsers?.length || 0} users in license_users table`);
 
     // Get owner info
     const { data: owner } = await supabase

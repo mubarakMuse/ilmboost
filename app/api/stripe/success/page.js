@@ -21,7 +21,6 @@ function StripeSuccessContent() {
     // Verify payment and refresh user data
     const verifyPayment = async () => {
       try {
-        console.log("Verifying payment:", { userId, sessionId, licenseType });
         
         // Verify session with Stripe
         const response = await fetch("/api/stripe/verify-session", {
@@ -43,7 +42,6 @@ function StripeSuccessContent() {
         }
 
         const data = await response.json();
-        console.log("Verify session response:", data);
 
         if (data.success) {
           // Fetch updated user data from API
@@ -54,7 +52,6 @@ function StripeSuccessContent() {
             // Fall through to update localStorage directly
           } else {
             const userData = await userResponse.json();
-            console.log("User data response:", userData);
             
             if (userData.success && userData.user) {
               // Update localStorage session with new membership

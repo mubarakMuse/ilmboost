@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { getSEOTags } from "@/libs/seo";
-import { getAllCourses, getCourseImageUrl } from "./courseUtils";
+import { getAllCoursesMetadata, getCourseImageUrl } from "./courseUtils";
 import CourseImage from "./components/CourseImage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -15,7 +15,7 @@ export const metadata = getSEOTags({
 });
 
 const IslamicStudies = () => {
-  const courses = getAllCourses();
+  const courses = getAllCoursesMetadata();
 
   return (
     <>
