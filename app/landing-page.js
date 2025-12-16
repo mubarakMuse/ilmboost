@@ -16,7 +16,7 @@ import logo from "@/app/icon.png";
 export default function LandingPage() {
   const router = useRouter();
   const courses = getAllCoursesMetadata();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [showQuizPopup, setShowQuizPopup] = useState(false);
 
   useEffect(() => {
     // Redirect to dashboard if logged in
@@ -25,16 +25,18 @@ export default function LandingPage() {
     }
   }, [router]);
 
-  // Filter courses based on search query
-  const filteredCourses = courses.filter((course) => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      course.courseTitle.toLowerCase().includes(query) ||
-      course.courseDescription.toLowerCase().includes(query) ||
-      course.type?.toLowerCase().includes(query)
-    );
-  });
+  useEffect(() => {
+    // Show quiz popup after user spends 10 seconds on the page
+    const timer = setTimeout(() => {
+      // Check if user hasn't dismissed it before (using localStorage)
+      const dismissed = localStorage.getItem('quizPopupDismissed');
+      if (!dismissed) {
+        setShowQuizPopup(true);
+      }
+    }, 10000); // 10 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>
@@ -109,32 +111,10 @@ export default function LandingPage() {
               Discover comprehensive Islamic studies courses designed for every learner.
             </p>
 
-            {/* Search Input - Enhanced */}
-            <div className="relative mb-10 sm:mb-12 lg:mb-16">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Teach me about..."
-                className="w-full px-5 sm:px-6 py-4 sm:py-5 text-base sm:text-lg border-2 border-black rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-black shadow-sm transition-shadow"
-              />
-              <div className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                <button 
-                  onClick={() => setSearchQuery("")}
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-800 transition-colors shadow-sm"
-                  title="Clear search"
-                >
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
             {/* Course List - Enhanced */}
             <div className="space-y-3 sm:space-y-4">
-              {filteredCourses.length > 0 ? (
-                filteredCourses.map((course) => {
+              {courses.length > 0 ? (
+                courses.map((course) => {
                   const isAvailable = course.status === "Available Now";
                   
                   return (
@@ -198,7 +178,7 @@ export default function LandingPage() {
                 })
               ) : (
                 <div className="text-center py-12">
-                  <p className="text-gray-500">No courses found matching &quot;{searchQuery}&quot;</p>
+                  <p className="text-gray-500">No courses available</p>
                 </div>
               )}
             </div>
@@ -207,6 +187,60 @@ export default function LandingPage() {
       </main>
 
       <Footer />
+
+      {/* Quiz Popup - Slides up from bottom */}
+      {showQuizPopup && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/20 z-50 transition-opacity"
+            onClick={() => {
+              setShowQuizPopup(false);
+              localStorage.setItem('quizPopupDismissed', 'true');
+            }}
+          />
+          
+          {/* Popup */}
+          <div className="fixed bottom-0 left-0 right-0 z-50" style={{ animation: 'slideUp 0.4s ease-out' }}>
+            <div className="max-w-2xl mx-auto px-4 pb-6">
+              <div className="bg-white border-2 border-black rounded-t-xl rounded-b-xl shadow-2xl p-6 sm:p-8 relative">
+                {/* Close Button */}
+                <button
+                  onClick={() => {
+                    setShowQuizPopup(false);
+                    localStorage.setItem('quizPopupDismissed', 'true');
+                  }}
+                  className="absolute top-4 right-4 text-gray-400 hover:text-black transition-colors"
+                  aria-label="Close"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+
+                <div className="text-center">
+                  <h2 className="text-2xl sm:text-3xl font-serif text-black mb-3">
+                    Test Your Knowledge
+                  </h2>
+                  <p className="text-base text-gray-600 mb-6">
+                    Challenge yourself with questions about Tafseer, Hadith Sciences, and Islamic studies.
+                  </p>
+                  <Link
+                    href="/quiz"
+                    onClick={() => {
+                      setShowQuizPopup(false);
+                      localStorage.setItem('quizPopupDismissed', 'true');
+                    }}
+                    className="inline-block px-6 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition-colors"
+                  >
+                    Take the Quiz →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }
