@@ -28,9 +28,11 @@ export default function AccountPage() {
   const [profileForm, setProfileForm] = useState({
     firstName: "",
     lastName: "",
+    phone: "",
     dobMonth: "",
     dobYear: ""
   });
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [profileError, setProfileError] = useState("");
   const [profileSuccess, setProfileSuccess] = useState("");
   
@@ -70,6 +72,7 @@ export default function AccountPage() {
       setProfileForm({
         firstName: userData.firstName || "",
         lastName: userData.lastName || "",
+        phone: userData.phone || "",
         dobMonth: userData.dobMonth || "",
         dobYear: userData.dobYear || ""
       });
@@ -154,28 +157,54 @@ export default function AccountPage() {
     }
   };
 
-  const handleProfileUpdate = (e) => {
+  const handleProfileUpdate = async (e) => {
     e.preventDefault();
     setProfileError("");
     setProfileSuccess("");
+    setIsUpdatingProfile(true);
 
     if (!profileForm.firstName || !profileForm.lastName) {
       setProfileError("First name and last name are required");
+      setIsUpdatingProfile(false);
       return;
     }
 
-    if (!profileForm.dobMonth || !profileForm.dobYear) {
-      setProfileError("Date of birth is required");
-      return;
-    }
+    try {
+      const response = await fetch('/api/auth/update-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          firstName: profileForm.firstName,
+          lastName: profileForm.lastName,
+          phone: profileForm.phone || null,
+          dobMonth: profileForm.dobMonth || null,
+          dobYear: profileForm.dobYear || null
+        })
+      });
 
-    const result = updateProfile(profileForm);
-    
-    if (result.success) {
-      setProfileSuccess("Profile updated successfully!");
-      setUser(result.user);
-    } else {
-      setProfileError(result.error || "Failed to update profile");
+      const data = await response.json();
+      
+      if (data.success) {
+        setProfileSuccess("Profile updated successfully!");
+        setUser(data.user);
+        // Update localStorage session
+        if (typeof window !== 'undefined') {
+          const session = localStorage.getItem('session');
+          if (session) {
+            const sessionData = JSON.parse(session);
+            sessionData.user = data.user;
+            localStorage.setItem('session', JSON.stringify(sessionData));
+          }
+        }
+      } else {
+        setProfileError(data.error || "Failed to update profile");
+      }
+    } catch (error) {
+      console.error('Update profile error:', error);
+      setProfileError("Failed to update profile. Please try again.");
+    } finally {
+      setIsUpdatingProfile(false);
     }
   };
 
@@ -530,92 +559,107 @@ export default function AccountPage() {
                 </div>
               </div>
 
-              <div className="card card-border bg-base-100 shadow-lg">
-                <div className="card-body">
-                  <h2 className="card-title text-2xl mb-6">Update Profile</h2>
-                  
-                  {profileError && (
-                    <div className="alert alert-error mb-4">
-                      <span>{profileError}</span>
-                    </div>
-                  )}
-                  
-                  {profileSuccess && (
-                    <div className="alert alert-success mb-4">
-                      <span>{profileSuccess}</span>
-                    </div>
-                  )}
+              <div className="bg-white border-2 border-gray-300 rounded-xl p-6 sm:p-8">
+                <h2 className="text-2xl font-serif font-bold text-black mb-6">Update Profile</h2>
+                
+                {profileError && (
+                  <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-700">{profileError}</p>
+                  </div>
+                )}
+                
+                {profileSuccess && (
+                  <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-sm text-green-700">{profileSuccess}</p>
+                  </div>
+                )}
 
-                  <form onSubmit={handleProfileUpdate}>
-                    <div className="grid md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <label className="label">
-                          <span className="label-text">First Name</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={profileForm.firstName}
-                          onChange={(e) => setProfileForm({ ...profileForm, firstName: e.target.value })}
-                          className="input input-bordered w-full"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="label">
-                          <span className="label-text">Last Name</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={profileForm.lastName}
-                          onChange={(e) => setProfileForm({ ...profileForm, lastName: e.target.value })}
-                          className="input input-bordered w-full"
-                          required
-                        />
-                      </div>
+                <form onSubmit={handleProfileUpdate} className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-black mb-2">
+                        First Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={profileForm.firstName}
+                        onChange={(e) => setProfileForm({ ...profileForm, firstName: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                        required
+                      />
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <label className="label">
-                          <span className="label-text">Birth Month</span>
-                        </label>
-                        <select
-                          value={profileForm.dobMonth}
-                          onChange={(e) => setProfileForm({ ...profileForm, dobMonth: e.target.value })}
-                          className="select select-bordered w-full"
-                          required
-                        >
-                          <option value="">Select Month</option>
-                          {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
-                            <option key={month} value={month}>
-                              {new Date(2000, month - 1).toLocaleString('default', { month: 'long' })}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                    <div>
+                      <label className="block text-sm font-medium text-black mb-2">
+                        Last Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={profileForm.lastName}
+                        onChange={(e) => setProfileForm({ ...profileForm, lastName: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                        required
+                      />
+                    </div>
+                  </div>
 
-                      <div>
-                        <label className="label">
-                          <span className="label-text">Birth Year</span>
-                        </label>
-                        <input
-                          type="number"
-                          value={profileForm.dobYear}
-                          onChange={(e) => setProfileForm({ ...profileForm, dobYear: e.target.value })}
-                          className="input input-bordered w-full"
-                          min="1900"
-                          max={new Date().getFullYear()}
-                          required
-                        />
-                      </div>
+                  <div>
+                    <label className="block text-sm font-medium text-black mb-2">
+                      Phone Number <span className="text-gray-500 text-xs">(Optional)</span>
+                    </label>
+                    <input
+                      type="tel"
+                      value={profileForm.phone}
+                      onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                      placeholder="+1234567890"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">Add your phone number for account verification</p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-black mb-2">
+                        Birth Month <span className="text-gray-500 text-xs">(Optional)</span>
+                      </label>
+                      <select
+                        value={profileForm.dobMonth}
+                        onChange={(e) => setProfileForm({ ...profileForm, dobMonth: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors bg-white"
+                      >
+                        <option value="">Select Month</option>
+                        {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                          <option key={month} value={month.toString().padStart(2, '0')}>
+                            {new Date(2000, month - 1).toLocaleString('default', { month: 'long' })}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
-                    <button type="submit" className="btn btn-primary">
-                      Update Profile
-                    </button>
-                  </form>
-                </div>
+                    <div>
+                      <label className="block text-sm font-medium text-black mb-2">
+                        Birth Year <span className="text-gray-500 text-xs">(Optional)</span>
+                      </label>
+                      <input
+                        type="number"
+                        value={profileForm.dobYear}
+                        onChange={(e) => setProfileForm({ ...profileForm, dobYear: e.target.value })}
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                        placeholder="YYYY"
+                        min="1900"
+                        max={new Date().getFullYear()}
+                      />
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={isUpdatingProfile}
+                    className="px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isUpdatingProfile ? 'Updating...' : 'Update Profile'}
+                  </button>
+                </form>
               </div>
             </div>
           )}

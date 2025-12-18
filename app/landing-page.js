@@ -75,115 +75,157 @@ export default function LandingPage() {
         }}
       />
       
-      {/* Minimal Header - Oboe style */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Image
-              src={logo}
-              alt={`${config.appName} logo`}
-              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full"
-              width={32}
-              height={32}
-            />
-            <span className="font-serif font-normal text-lg sm:text-xl text-black tracking-tight">{config.appName}</span>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Link href="/signup" className="px-3 sm:px-4 py-1.5 sm:py-2 bg-[#F5E6D3] hover:bg-[#E8D4B8] text-black font-medium rounded-md transition-colors text-sm sm:text-base">
-              Sign Up
-            </Link>
-            <Link href="/login" className="px-3 sm:px-4 py-1.5 sm:py-2 bg-white hover:bg-gray-50 text-black font-medium border border-black rounded-md transition-colors text-sm sm:text-base">
-              Log In
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="min-h-screen bg-[#FAFAFA]">
-        {/* Main Content Area - Mobile Optimized */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-          {/* Hero Section - Enhanced */}
-          <div className="mb-12 sm:mb-16 lg:mb-20">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif text-black mb-4 sm:mb-6 lg:mb-8 leading-[1.1] tracking-tight">
-              What do you want to learn about?
+        {/* Hero Section */}
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 lg:pt-24 pb-12 sm:pb-16">
+          <div className="text-center mb-12 sm:mb-16">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-black mb-6 leading-tight tracking-tight">
+              Learn Islamic Studies
+              <br />
+              <span className="text-gray-600">at Your Own Pace</span>
             </h1>
-            <p className="text-base sm:text-lg text-gray-600 mb-8 sm:mb-10 max-w-2xl">
-              Discover comprehensive Islamic studies courses designed for every learner.
+            <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto mb-8 leading-relaxed">
+              Discover comprehensive courses covering Tafseer, Hadith Sciences, and more. 
             </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link
+                href="/signup"
+                className="px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors shadow-sm"
+              >
+                Get Started Free
+              </Link>
+              <Link
+                href="/courses"
+                className="px-8 py-3 bg-white text-black font-semibold border-2 border-black rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Browse Courses
+              </Link>
+            </div>
+          </div>
+        </section>
 
-            {/* Course List - Enhanced */}
-            <div className="space-y-3 sm:space-y-4">
-              {courses.length > 0 ? (
-                courses.map((course) => {
-                  const isAvailable = course.status === "Available Now";
-                  
-                  return (
-                    <Link
-                      key={course.courseID}
-                      href={isAvailable ? `/courses/${course.courseSlug}` : '#'}
-                      className={`group flex items-center gap-4 sm:gap-5 p-4 sm:p-5 rounded-xl transition-all border-2 ${
-                        isAvailable 
-                          ? 'border-transparent hover:border-gray-300 hover:bg-white hover:shadow-md cursor-pointer' 
-                          : 'border-gray-200 opacity-60 cursor-not-allowed'
-                      }`}
-                    >
-                      {/* Course Thumbnail */}
-                      {course.courseImage && (
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-gray-200 flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
-                          <CourseImage
-                            src={getCourseImageUrl(course.courseImage)}
-                            alt={course.courseImageAlt || course.courseTitle}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      )}
-                      
-                      {/* Course Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                            {course.type || 'Islamic Studies'}
+        {/* Courses Section */}
+        <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20 lg:pb-24">
+          <div className="mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-black mb-3">
+              Available Courses
+            </h2>
+            <p className="text-gray-600">
+              Choose from our curated selection of Islamic studies courses
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {courses.length > 0 ? (
+              courses.map((course) => {
+                const isAvailable = course.status === "Available Now";
+                const isPremium = isPremiumCourse(course);
+                
+                return (
+                  <Link
+                    key={course.courseID}
+                    href={isAvailable ? `/courses/${course.courseSlug}` : '#'}
+                    className={`group bg-white border-2 rounded-xl overflow-hidden transition-all ${
+                      isAvailable 
+                        ? 'border-gray-300 hover:border-black hover:shadow-lg cursor-pointer' 
+                        : 'border-gray-200 opacity-60 cursor-not-allowed'
+                    }`}
+                  >
+                    {/* Course Image */}
+                    {course.courseImage && (
+                      <div className="w-full h-48 bg-gray-200 overflow-hidden">
+                        <CourseImage
+                          src={getCourseImageUrl(course.courseImage)}
+                          alt={course.courseImageAlt || course.courseTitle}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Course Content */}
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 mb-3 flex-wrap">
+                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          {course.type || 'Islamic Studies'}
+                        </span>
+                        {isPremium ? (
+                          <span className="px-2.5 py-1 text-xs font-semibold bg-[#F5E6D3] text-black rounded-md">
+                            Premium
                           </span>
-                          {isPremiumCourse(course) ? (
-                            <span className="px-2 py-0.5 text-xs font-semibold bg-[#F5E6D3] text-black rounded-md">
-                              Premium
-                            </span>
-                          ) : (
-                            <span className="px-2 py-0.5 text-xs font-semibold bg-gray-200 text-gray-700 rounded-md">
-                              Free
-                            </span>
-                          )}
-                          {!isAvailable && (
-                            <span className="text-xs text-gray-400 font-medium">• Coming Soon</span>
-                          )}
-                        </div>
-                        <h3 className="text-lg sm:text-xl font-semibold text-black line-clamp-2 group-hover:text-gray-700 transition-colors">
-                          {course.courseTitle}
-                        </h3>
-                        {course.courseDescription && (
-                          <p className="text-sm text-gray-600 mt-1 line-clamp-1 hidden sm:block">
-                            {course.courseDescription}
-                          </p>
+                        ) : (
+                          <span className="px-2.5 py-1 text-xs font-semibold bg-gray-200 text-gray-700 rounded-md">
+                            Free
+                          </span>
+                        )}
+                        {!isAvailable && (
+                          <span className="text-xs text-gray-400 font-medium">Coming Soon</span>
                         )}
                       </div>
                       
-                      {/* Arrow Icon */}
-                      {isAvailable && (
-                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-black flex-shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                      <h3 className="text-xl font-semibold text-black mb-2 line-clamp-2 group-hover:text-gray-700 transition-colors">
+                        {course.courseTitle}
+                      </h3>
+                      
+                      {course.courseDescription && (
+                        <p className="text-sm text-gray-600 line-clamp-2 mb-4">
+                          {course.courseDescription}
+                        </p>
                       )}
-                    </Link>
-                  );
-                })
-              ) : (
-                <div className="text-center py-12">
-                  <p className="text-gray-500">No courses available</p>
-                </div>
-              )}
+
+                      {course.estimatedTime && (
+                        <p className="text-xs text-gray-500 mb-4">
+                          ⏱ {course.estimatedTime}
+                        </p>
+                      )}
+
+                      {isAvailable && (
+                        <div className="flex items-center text-black font-medium text-sm group-hover:gap-2 transition-all">
+                          <span>View Course</span>
+                          <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  </Link>
+                );
+              })
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-500">No courses available at the moment</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20 lg:pb-24">
+          <div className="bg-white border-2 border-black rounded-xl p-8 sm:p-12 text-center">
+            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-black mb-4">
+              Ready to Start Learning?
+            </h2>
+            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+              Join Ilm Boost today and access comprehensive Islamic studies courses. 
+              Start with a free account and upgrade anytime.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/signup"
+                className="px-8 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                Create Free Account
+              </Link>
+              <Link
+                href="/membership"
+                className="px-8 py-3 bg-[#F5E6D3] text-black font-semibold rounded-lg hover:bg-[#E8D4B8] transition-colors"
+              >
+                View Pricing
+              </Link>
             </div>
           </div>
-        </div>
+        </section>
       </main>
 
       <Footer />
@@ -219,7 +261,7 @@ export default function LandingPage() {
                 </button>
 
                 <div className="text-center">
-                  <h2 className="text-2xl sm:text-3xl font-serif text-black mb-3">
+                  <h2 className="text-2xl sm:text-3xl font-serif font-bold text-black mb-3">
                     Test Your Knowledge
                   </h2>
                   <p className="text-base text-gray-600 mb-6">
@@ -231,7 +273,7 @@ export default function LandingPage() {
                       setShowQuizPopup(false);
                       localStorage.setItem('quizPopupDismissed', 'true');
                     }}
-                    className="inline-block px-6 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 transition-colors"
+                    className="inline-block px-6 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
                   >
                     Take the Quiz →
                   </Link>
@@ -244,4 +286,3 @@ export default function LandingPage() {
     </>
   );
 }
-

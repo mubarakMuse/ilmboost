@@ -14,9 +14,6 @@ function SignupContent() {
     email: '',
     firstName: '',
     lastName: '',
-    phone: '',
-    dobMonth: '',
-    dobYear: '',
     pin: '',
     confirmPin: '',
     secretAnswer: '' // Mom's birth year
@@ -39,14 +36,8 @@ function SignupContent() {
     setIsLoading(true);
 
     // Validation
-    if (!formData.email || !formData.firstName || !formData.lastName || !formData.phone) {
+    if (!formData.email || !formData.firstName || !formData.lastName) {
       setError('Please fill in all required fields');
-      setIsLoading(false);
-      return;
-    }
-
-    if (!formData.dobMonth || !formData.dobYear) {
-      setError('Please select your date of birth');
       setIsLoading(false);
       return;
     }
@@ -75,18 +66,18 @@ function SignupContent() {
         email: formData.email,
         firstName: formData.firstName,
         lastName: formData.lastName,
-        phone: formData.phone,
-        dobMonth: formData.dobMonth,
-        dobYear: formData.dobYear,
+        phone: '', // Phone not required during signup
+        dobMonth: '', // Date of birth not required during signup
+        dobYear: '', // Date of birth not required during signup
         pin: formData.pin,
         secretAnswer: formData.secretAnswer,
         membership: 'free' // Always free on signup, license purchased separately
       });
 
       if (result.success) {
-        // Redirect to license page to purchase a license
+        // Redirect to dashboard
         setTimeout(() => {
-          router.push('/membership');
+          router.push('/dashboard');
         }, 100);
       } else {
         setError(result.error || 'Signup failed. Please try again.');
@@ -99,213 +90,137 @@ function SignupContent() {
     }
   };
 
-  // Generate month options
-  const months = Array.from({ length: 12 }, (_, i) => {
-    const month = i + 1;
-    return { value: month.toString().padStart(2, '0'), label: new Date(2000, i, 1).toLocaleString('default', { month: 'long' }) };
-  });
-
-  // Generate year options (1900 to current year)
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: currentYear - 1899 }, (_, i) => currentYear - i);
-
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-base-100 py-12">
-        <div className="max-w-md mx-auto px-6">
-          <div className="card bg-base-100 shadow-lg">
-            <div className="card-body">
-              <h1 className="text-3xl font-bold text-center mb-2">Create Account</h1>
-              <p className="text-center text-base-content/70 mb-6">
-                Sign up to start your learning journey
-              </p>
+      <main className="min-h-screen bg-[#FAFAFA] flex items-center justify-center py-12 px-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-serif font-bold text-black mb-3">Create Account</h1>
+            <p className="text-gray-600 text-base">Start your learning journey today</p>
+          </div>
 
-              {error && (
-                <div className="alert alert-error mb-4">
-                  <span>{error}</span>
-                </div>
-              )}
+          <div className="bg-white border-2 border-black rounded-xl p-8 shadow-sm">
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            )}
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Email *</span>
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="input input-bordered"
-                    placeholder="your@email.com"
-                    required
-                  />
-                </div>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                  placeholder="your@email.com"
+                  required
+                />
+              </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text">First Name *</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      className="input input-bordered"
-                      placeholder="First Name"
-                      required
-                    />
-                  </div>
-
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text">Last Name *</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      className="input input-bordered"
-                      placeholder="Last Name"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Phone Number *</span>
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="input input-bordered"
-                    placeholder="+1234567890"
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text">Birth Month *</span>
-                    </label>
-                    <select
-                      name="dobMonth"
-                      value={formData.dobMonth}
-                      onChange={handleChange}
-                      className="select select-bordered"
-                      required
-                    >
-                      <option value="">Select Month</option>
-                      {months.map(month => (
-                        <option key={month.value} value={month.value}>{month.label}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text">Birth Year *</span>
-                    </label>
-                    <select
-                      name="dobYear"
-                      value={formData.dobYear}
-                      onChange={handleChange}
-                      className="select select-bordered"
-                      required
-                    >
-                      <option value="">Select Year</option>
-                      {years.map(year => (
-                        <option key={year} value={year}>{year}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">4-Digit PIN *</span>
-                  </label>
-                  <input
-                    type="password"
-                    name="pin"
-                    value={formData.pin}
-                    onChange={handleChange}
-                    className="input input-bordered"
-                    placeholder="0000"
-                    maxLength={4}
-                    pattern="[0-9]{4}"
-                    required
-                  />
-                  <label className="label">
-                    <span className="label-text-alt">Enter a 4-digit PIN for login</span>
-                  </label>
-                </div>
-
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Confirm PIN *</span>
-                  </label>
-                  <input
-                    type="password"
-                    name="confirmPin"
-                    value={formData.confirmPin}
-                    onChange={handleChange}
-                    className="input input-bordered"
-                    placeholder="0000"
-                    maxLength={4}
-                    pattern="[0-9]{4}"
-                    required
-                  />
-                </div>
-
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Mom&apos;s Birth Year *</span>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-black mb-2">
+                    First Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    name="secretAnswer"
-                    value={formData.secretAnswer}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleChange}
-                    className="input input-bordered"
-                    placeholder="YYYY"
-                    maxLength={4}
-                    pattern="[0-9]{4}"
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                    placeholder="First Name"
                     required
                   />
-                  <label className="label">
-                    <span className="label-text-alt">Used for password recovery (4 digits)</span>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Last Name <span className="text-red-500">*</span>
                   </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                    placeholder="Last Name"
+                    required
+                  />
                 </div>
+              </div>
 
-                <div className="alert alert-info">
-                  <div>
-                    <h3 className="font-bold text-sm">Free Account</h3>
-                    <p className="text-xs">All accounts start free. You can purchase a license after signing up to access courses.</p>
-                  </div>
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-black mb-2">
+                  4-Digit PIN <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="password"
+                  name="pin"
+                  value={formData.pin}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                  placeholder="0000"
+                  maxLength={4}
+                  pattern="[0-9]{4}"
+                  required
+                />
+                <p className="mt-1 text-xs text-gray-500">Enter a 4-digit PIN for login</p>
+              </div>
 
-                <button
-                  type="submit"
-                  className={`btn btn-primary w-full ${isLoading ? 'loading' : ''}`}
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Creating Account...' : 'Sign Up'}
-                </button>
-              </form>
+              <div>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Confirm PIN <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="password"
+                  name="confirmPin"
+                  value={formData.confirmPin}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                  placeholder="0000"
+                  maxLength={4}
+                  pattern="[0-9]{4}"
+                  required
+                />
+              </div>
 
-              <div className="divider">OR</div>
+              <div>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Mom&apos;s Birth Year - Used for password recovery  <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="secretAnswer"
+                  value={formData.secretAnswer}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                  placeholder="YYYY"
+                  maxLength={4}
+                  pattern="[0-9]{4}"
+                  required
+                />
+                <p className="mt-1 text-xs text-gray-500">In case you forget your PIN</p>
+              </div>
 
-              <p className="text-center text-sm">
+              <button
+                type="submit"
+                className={`w-full py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Creating Account...' : 'Create Account'}
+              </button>
+            </form>
+
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <p className="text-center text-sm text-gray-600">
                 Already have an account?{' '}
-                <Link href="/login" className="link link-primary">
+                <Link href="/login" className="text-black font-semibold hover:underline">
                   Login
                 </Link>
               </p>
@@ -323,7 +238,7 @@ export default function SignupPage() {
     <Suspense fallback={
       <>
         <Header />
-        <main className="min-h-screen bg-base-100 flex items-center justify-center">
+        <main className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
           <span className="loading loading-spinner loading-lg"></span>
         </main>
         <Footer />
@@ -333,4 +248,3 @@ export default function SignupPage() {
     </Suspense>
   );
 }
-

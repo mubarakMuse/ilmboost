@@ -145,7 +145,7 @@ function MembershipContent() {
     return (
       <>
         <Header />
-        <main className="min-h-screen bg-base-100 flex items-center justify-center">
+        <main className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
           <span className="loading loading-spinner loading-lg"></span>
         </main>
         <Footer />
@@ -156,256 +156,225 @@ function MembershipContent() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-base-100 py-12">
-        <div className="max-w-4xl mx-auto px-6">
+      <main className="min-h-screen bg-[#FAFAFA] py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">Purchase a License</h1>
-            <p className="text-xl text-base-content/70">
+            <h1 className="text-4xl sm:text-5xl font-serif font-bold text-black mb-4">Purchase a License</h1>
+            <p className="text-lg text-gray-600">
               Choose a license to activate your account and access all courses
             </p>
             {!user || !hasActiveSession() ? (
-              <div className="alert alert-info mt-4 max-w-md mx-auto">
-                <div>
-                  <p className="text-sm">Please sign up or log in to purchase a license.</p>
-                </div>
+              <div className="mt-6 bg-white border-2 border-gray-300 rounded-xl p-4 max-w-md mx-auto">
+                <p className="text-sm text-gray-700">Please sign up or log in to purchase a license.</p>
               </div>
             ) : null}
           </div>
 
           {/* Activate Existing License */}
           {user && hasActiveSession() && (
-            <div className="card bg-base-100 border-2 border-primary shadow-lg mb-8">
-              <div className="card-body">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-1">
-                    <h2 className="card-title text-2xl">Have a License Key?</h2>
-                    <p className="text-base-content/70 mt-1">
-                      Activate your existing license key to get started immediately
-                    </p>
+            <div className="bg-white border-2 border-black rounded-xl p-6 sm:p-8 mb-12 shadow-sm">
+              <h2 className="text-2xl font-serif font-bold text-black mb-2">Have a License Key?</h2>
+              <p className="text-gray-600 mb-6">
+                Activate your existing license key to get started immediately
+              </p>
+              
+              <form onSubmit={handleActivateLicense} className="space-y-4">
+                {activationError && (
+                  <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-sm text-red-700">{activationError}</p>
                   </div>
-                </div>
+                )}
+                {activationSuccess && (
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-sm text-green-700">{activationSuccess}</p>
+                  </div>
+                )}
                 
-                <form onSubmit={handleActivateLicense} className="space-y-4">
-                  {activationError && (
-                    <div className="alert alert-error">
-                      <span className="text-sm">{activationError}</span>
-                    </div>
-                  )}
-                  {activationSuccess && (
-                    <div className="alert alert-success">
-                      <span className="text-sm">{activationSuccess}</span>
-                    </div>
-                  )}
-                  
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={licenseKey}
-                      onChange={(e) => setLicenseKey(e.target.value.toUpperCase())}
-                      placeholder="ILM-XXXX-XXXX-XXXX"
-                      className="input input-bordered flex-1 font-mono text-lg"
-                      maxLength={20}
-                      disabled={isActivating}
-                    />
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      disabled={isActivating || !licenseKey.trim()}
-                    >
-                      {isActivating ? (
-                        <>
-                          <span className="loading loading-spinner loading-xs"></span>
-                          Activating...
-                        </>
-                      ) : (
-                        'Activate License'
-                      )}
-                    </button>
-                  </div>
-                  <p className="text-xs text-base-content/60 text-center">
-                    Enter the license key provided by your organization or family plan owner
-                  </p>
-                </form>
-              </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="text"
+                    value={licenseKey}
+                    onChange={(e) => setLicenseKey(e.target.value.toUpperCase())}
+                    placeholder="ILM-XXXX-XXXX-XXXX"
+                    className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors font-mono text-lg"
+                    maxLength={20}
+                    disabled={isActivating}
+                  />
+                  <button
+                    type="submit"
+                    className="px-6 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={isActivating || !licenseKey.trim()}
+                  >
+                    {isActivating ? 'Activating...' : 'Activate License'}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 text-center">
+                  Enter the license key provided by your organization or family plan owner
+                </p>
+              </form>
             </div>
           )}
 
-          <div className="divider my-8">
-            <span className="text-base-content/60">OR</span>
+          <div className="flex items-center gap-4 my-12">
+            <div className="flex-1 border-t border-gray-300"></div>
+            <span className="text-gray-600 font-medium">OR</span>
+            <div className="flex-1 border-t border-gray-300"></div>
           </div>
 
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold mb-2">Purchase a New License</h2>
-            <p className="text-base-content/70">Select a license plan below</p>
+          <div className="text-center mb-8">
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-black mb-2">Purchase a New License</h2>
+            <p className="text-gray-600">Select a license plan below</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
             {/* Single User License */}
-            <div className="card bg-base-100 border-2 border-base-300">
-              <div className="card-body">
-                <h2 className="card-title text-2xl mb-2">Single User</h2>
-                <div className="text-4xl font-bold mb-4">
-                  $50
-                  <span className="text-lg font-normal text-base-content/70">/year</span>
-                </div>
-                <p className="text-sm text-base-content/60 mb-4">Recurring annual subscription</p>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-start gap-2">
-                    <span className="text-success">✓</span>
-                    <span>Access to all courses</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-success">✓</span>
-                    <span>Full course content</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-success">✓</span>
-                    <span>Advanced materials</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-success">✓</span>
-                    <span>Priority support</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-success">✓</span>
-                    <span>Annual license (1 year)</span>
-                  </li>
-                </ul>
-                <button
-                  onClick={() => handlePurchaseLicense('single')}
-                  className="btn btn-primary w-full"
-                  disabled={isProcessing || !user || !hasActiveSession()}
-                >
-                  {isProcessing ? (
-                    <>
-                      <span className="loading loading-spinner loading-xs"></span>
-                      Processing...
-                    </>
-                  ) : (
-                    'Purchase License'
-                  )}
-                </button>
+            <div className="bg-white border-2 border-gray-300 rounded-xl p-6 sm:p-8 hover:border-black transition-colors">
+              <h2 className="text-2xl font-serif font-bold text-black mb-4">Single User</h2>
+              <div className="text-4xl font-bold text-black mb-2">
+                $50
+                <span className="text-lg font-normal text-gray-600">/year</span>
               </div>
+              <p className="text-sm text-gray-600 mb-6">Recurring annual subscription</p>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Access to all courses</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Full course content</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Advanced materials</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Priority support</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Annual license (1 year)</span>
+                </li>
+              </ul>
+              <button
+                onClick={() => handlePurchaseLicense('single')}
+                className="w-full px-6 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isProcessing || !user || !hasActiveSession()}
+              >
+                {isProcessing ? 'Processing...' : 'Purchase License'}
+              </button>
             </div>
 
             {/* Family/Group License */}
-            <div className="card bg-primary text-primary-content border-2 border-primary">
-              <div className="card-body">
-                <div className="badge badge-secondary mb-2">BEST VALUE</div>
-                <h2 className="card-title text-2xl mb-2">Family/Group</h2>
-                <div className="text-4xl font-bold mb-2">
-                  $120
-                  <span className="text-lg font-normal opacity-80">/year</span>
-                </div>
-                <div className="mb-2">
-                  <span className="text-lg line-through opacity-70">$500</span>
-                  <span className="text-sm opacity-80 ml-2">Save $380</span>
-                </div>
-                <p className="text-sm opacity-70 mb-4">Recurring annual subscription</p>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-start gap-2">
-                    <span>✓</span>
-                    <span>Access for up to 10 users</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span>✓</span>
-                    <span>All courses included</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span>✓</span>
-                    <span>Full course content</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span>✓</span>
-                    <span>Advanced materials</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span>✓</span>
-                    <span>Priority support</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span>✓</span>
-                    <span>Annual license (1 year)</span>
-                  </li>
-                </ul>
-                <button
-                  onClick={() => handlePurchaseLicense('family')}
-                  className="btn btn-secondary w-full"
-                  disabled={isProcessing || !user || !hasActiveSession()}
-                >
-                  {isProcessing ? (
-                    <>
-                      <span className="loading loading-spinner loading-xs"></span>
-                      Processing...
-                    </>
-                  ) : (
-                    'Purchase License'
-                  )}
-                </button>
+            <div className="bg-gradient-to-br from-[#F5E6D3] to-[#E8D4B8] border-2 border-black rounded-xl p-6 sm:p-8 shadow-lg relative">
+              <div className="absolute top-4 right-4">
+                <span className="px-3 py-1 bg-black text-white text-xs font-semibold rounded-md">BEST VALUE</span>
               </div>
+              <h2 className="text-2xl font-serif font-bold text-black mb-4">Family/Group</h2>
+              <div className="text-4xl font-bold text-black mb-2">
+                $120
+                <span className="text-lg font-normal text-gray-700">/year</span>
+              </div>
+              <div className="mb-2">
+                <span className="text-lg line-through text-gray-600">$500</span>
+                <span className="text-sm text-gray-700 ml-2">Save $380</span>
+              </div>
+              <p className="text-sm text-gray-700 mb-6">Recurring annual subscription</p>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start gap-2 text-gray-800">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Access for up to 10 users</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-800">
+                  <span className="text-black mt-1">✓</span>
+                  <span>All courses included</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-800">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Full course content</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-800">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Advanced materials</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-800">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Priority support</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-800">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Annual license (1 year)</span>
+                </li>
+              </ul>
+              <button
+                onClick={() => handlePurchaseLicense('family')}
+                className="w-full px-6 py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isProcessing || !user || !hasActiveSession()}
+              >
+                {isProcessing ? 'Processing...' : 'Purchase License'}
+              </button>
             </div>
 
             {/* Organization License */}
-            <div className="card bg-base-100 border-2 border-base-300">
-              <div className="card-body">
-                <h2 className="card-title text-2xl mb-2">Organization</h2>
-                <div className="text-4xl font-bold mb-4">
-                  Custom
-                </div>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-start gap-2">
-                    <span className="text-success">✓</span>
-                    <span>Custom user limit</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-success">✓</span>
-                    <span>All courses included</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-success">✓</span>
-                    <span>Bulk licensing discounts</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-success">✓</span>
-                    <span>Dedicated support</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-success">✓</span>
-                    <span>Custom terms available</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-success">✓</span>
-                    <span>Contact admin for pricing</span>
-                  </li>
-                </ul>
-                <button
-                  onClick={() => handlePurchaseLicense('organization')}
-                  className="btn btn-outline w-full"
-                  disabled={isProcessing || !user || !hasActiveSession()}
-                >
-                  Contact Admin
-                </button>
+            <div className="bg-white border-2 border-gray-300 rounded-xl p-6 sm:p-8 hover:border-black transition-colors">
+              <h2 className="text-2xl font-serif font-bold text-black mb-4">Organization</h2>
+              <div className="text-4xl font-bold text-black mb-2">
+                Custom
               </div>
+              <p className="text-sm text-gray-600 mb-6">Contact us for pricing</p>
+              <ul className="space-y-3 mb-8">
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Custom user limit</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-black mt-1">✓</span>
+                  <span>All courses included</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Bulk licensing discounts</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Dedicated support</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Custom terms available</span>
+                </li>
+                <li className="flex items-start gap-2 text-gray-700">
+                  <span className="text-black mt-1">✓</span>
+                  <span>Contact admin for pricing</span>
+                </li>
+              </ul>
+              <button
+                onClick={() => handlePurchaseLicense('organization')}
+                className="w-full px-6 py-3 bg-white text-black font-semibold border-2 border-black rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isProcessing || !user || !hasActiveSession()}
+              >
+                Contact Admin
+              </button>
             </div>
           </div>
 
           {!user || !hasActiveSession() ? (
-            <div className="text-center mt-8">
-              <p className="text-base-content/70 mb-2">Need to create an account first?</p>
+            <div className="text-center mt-12">
+              <p className="text-gray-600 mb-4">Need to create an account first?</p>
               <div className="flex gap-4 justify-center">
-                <Link href="/signup" className="link link-primary">
+                <Link href="/signup" className="px-6 py-2 bg-[#F5E6D3] hover:bg-[#E8D4B8] text-black font-semibold rounded-lg transition-colors">
                   Sign Up
                 </Link>
-                <span className="text-base-content/50">|</span>
-                <Link href="/login" className="link link-primary">
+                <Link href="/login" className="px-6 py-2 bg-white hover:bg-gray-50 text-black font-semibold border-2 border-black rounded-lg transition-colors">
                   Login
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="text-center mt-8">
-              <Link href="/dashboard" className="link link-hover">
-                Go to Dashboard
+            <div className="text-center mt-12">
+              <Link href="/dashboard" className="text-gray-600 hover:text-black transition-colors">
+                Go to Dashboard →
               </Link>
             </div>
           )}
@@ -421,7 +390,7 @@ export default function MembershipPage() {
     <Suspense fallback={
       <>
         <Header />
-        <main className="min-h-screen bg-base-100 flex items-center justify-center">
+        <main className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
           <span className="loading loading-spinner loading-lg"></span>
         </main>
         <Footer />
@@ -431,4 +400,3 @@ export default function MembershipPage() {
     </Suspense>
   );
 }
-

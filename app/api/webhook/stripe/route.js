@@ -102,22 +102,18 @@ export async function POST(req) {
             break;
           }
           
-          // Generate license key from user info: FirstInitial + LastInitial + Last4DigitsOfPhone + YearOfBirth
-          const generateLicenseKey = (firstName, lastName, phone, dobYear) => {
+          // Generate license key from user info: FirstInitial + LastInitial + YearOfBirth
+          const generateLicenseKey = (firstName, lastName, dobYear) => {
             const firstInitial = (firstName || 'X').charAt(0).toUpperCase();
             const lastInitial = (lastName || 'X').charAt(0).toUpperCase();
-            
-            // Extract last 4 digits of phone (remove all non-digits first)
-            const phoneDigits = (phone || '').replace(/\D/g, '');
-            const phoneLast4 = phoneDigits.slice(-4).padStart(4, '0');
             
             // Get birth year (4 digits)
             const birthYear = (dobYear || 0).toString().padStart(4, '0').slice(-4);
             
-            return firstInitial + lastInitial + phoneLast4 + birthYear;
+            return firstInitial + lastInitial + birthYear;
           };
           
-          const licenseKey = generateLicenseKey(user.first_name, user.last_name, user.phone, user.dob_year);
+          const licenseKey = generateLicenseKey(user.first_name, user.last_name, user.dob_year);
           
           // Check if license key already exists, if so add a suffix
           let finalLicenseKey = licenseKey;

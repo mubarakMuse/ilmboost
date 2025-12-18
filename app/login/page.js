@@ -140,176 +140,174 @@ export default function LoginPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-base-100 py-12">
-        <div className="max-w-md mx-auto px-6">
-          <div className="card bg-base-100 shadow-lg">
-            <div className="card-body">
-              <h1 className="text-3xl font-bold text-center mb-2">Login</h1>
-              <p className="text-center text-base-content/70 mb-6">
-                Enter your email and PIN to continue
-              </p>
+      <main className="min-h-screen bg-[#FAFAFA] flex items-center justify-center py-12 px-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-serif font-bold text-black mb-3">Welcome Back</h1>
+            <p className="text-gray-600 text-base">Enter your credentials to continue</p>
+          </div>
 
-              {error && (
-                <div className="alert alert-error mb-4">
-                  <span>{error}</span>
-                </div>
-              )}
+          <div className="bg-white border-2 border-black rounded-xl p-8 shadow-sm">
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            )}
 
-              {!showReset ? (
-                <>
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="form-control">
-                      <label className="label">
-                        <span className="label-text">Email</span>
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="your@email.com"
-                        required
-                      />
-                    </div>
+            {!showReset ? (
+              <>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-medium text-black mb-2">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                      placeholder="your@email.com"
+                      required
+                    />
+                  </div>
 
-                    <div className="form-control">
-                      <label className="label">
-                        <span className="label-text">4-Digit PIN</span>
-                      </label>
-                      <input
-                        type="password"
-                        name="pin"
-                        value={formData.pin}
-                        onChange={handleChange}
-                        className="input input-bordered"
-                        placeholder="0000"
-                        maxLength={4}
-                        pattern="[0-9]{4}"
-                        required
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className={`btn btn-primary w-full ${isLoading ? 'loading' : ''}`}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? 'Logging in...' : 'Login'}
-                    </button>
-                  </form>
-
-                  <div className="divider">OR</div>
+                  <div>
+                    <label className="block text-sm font-medium text-black mb-2">
+                      4-Digit PIN
+                    </label>
+                    <input
+                      type="password"
+                      name="pin"
+                      value={formData.pin}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                      placeholder="0000"
+                      maxLength={4}
+                      pattern="[0-9]{4}"
+                      required
+                    />
+                  </div>
 
                   <button
+                    type="submit"
+                    className={`w-full py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Logging in...' : 'Login'}
+                  </button>
+                </form>
+
+                <div className="mt-6 pt-6 border-t border-gray-200 space-y-4">
+                  <button
                     onClick={() => setShowReset(true)}
-                    className="btn btn-ghost w-full"
+                    className="w-full text-sm text-gray-600 hover:text-black transition-colors"
                   >
                     Forgot PIN?
                   </button>
 
-                  <p className="text-center text-sm">
+                  <p className="text-center text-sm text-gray-600">
                     Don&apos;t have an account?{' '}
-                    <Link href="/signup" className="link link-primary">
+                    <Link href="/signup" className="text-black font-semibold hover:underline">
                       Sign Up
                     </Link>
                   </p>
-                </>
-              ) : (
-                <>
+                </div>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    setShowReset(false);
+                    setError('');
+                    setResetData({ email: '', secretAnswer: '', newPin: '', confirmPin: '' });
+                  }}
+                  className="mb-4 text-sm text-gray-600 hover:text-black transition-colors flex items-center gap-2"
+                >
+                  <span>←</span> Back to Login
+                </button>
+
+                <h2 className="text-2xl font-serif font-bold mb-2">Reset PIN</h2>
+                <p className="text-sm text-gray-600 mb-6">
+                  Enter your email and answer the security question to reset your PIN.
+                </p>
+
+                <form onSubmit={handleResetSubmit} className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-medium text-black mb-2">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={resetData.email}
+                      onChange={handleResetChange}
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                      placeholder="your@email.com"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-black mb-2">
+                      Mom&apos;s Birth Year
+                    </label>
+                    <input
+                      type="text"
+                      name="secretAnswer"
+                      value={resetData.secretAnswer}
+                      onChange={handleResetChange}
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                      placeholder="YYYY"
+                      maxLength={4}
+                      pattern="[0-9]{4}"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-black mb-2">
+                      New 4-Digit PIN
+                    </label>
+                    <input
+                      type="password"
+                      name="newPin"
+                      value={resetData.newPin}
+                      onChange={handleResetChange}
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                      placeholder="0000"
+                      maxLength={4}
+                      pattern="[0-9]{4}"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-black mb-2">
+                      Confirm New PIN
+                    </label>
+                    <input
+                      type="password"
+                      name="confirmPin"
+                      value={resetData.confirmPin}
+                      onChange={handleResetChange}
+                      className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-black transition-colors"
+                      placeholder="0000"
+                      maxLength={4}
+                      pattern="[0-9]{4}"
+                      required
+                    />
+                  </div>
+
                   <button
-                    onClick={() => {
-                      setShowReset(false);
-                      setError('');
-                      setResetData({ email: '', secretAnswer: '', newPin: '', confirmPin: '' });
-                    }}
-                    className="btn btn-sm btn-ghost mb-4"
+                    type="submit"
+                    className="w-full py-3 bg-black text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors"
                   >
-                    ← Back to Login
+                    Reset PIN
                   </button>
-
-                  <h2 className="text-xl font-bold mb-4">Reset PIN</h2>
-                  <p className="text-sm text-base-content/70 mb-6">
-                    Enter your email and answer the security question to reset your PIN.
-                  </p>
-
-                  <form onSubmit={handleResetSubmit} className="space-y-4">
-                    <div className="form-control">
-                      <label className="label">
-                        <span className="label-text">Email</span>
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={resetData.email}
-                        onChange={handleResetChange}
-                        className="input input-bordered"
-                        placeholder="your@email.com"
-                        required
-                      />
-                    </div>
-
-                    <div className="form-control">
-                      <label className="label">
-                        <span className="label-text">Mom&apos;s Birth Year</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="secretAnswer"
-                        value={resetData.secretAnswer}
-                        onChange={handleResetChange}
-                        className="input input-bordered"
-                        placeholder="YYYY"
-                        maxLength={4}
-                        pattern="[0-9]{4}"
-                        required
-                      />
-                    </div>
-
-                    <div className="form-control">
-                      <label className="label">
-                        <span className="label-text">New 4-Digit PIN</span>
-                      </label>
-                      <input
-                        type="password"
-                        name="newPin"
-                        value={resetData.newPin}
-                        onChange={handleResetChange}
-                        className="input input-bordered"
-                        placeholder="0000"
-                        maxLength={4}
-                        pattern="[0-9]{4}"
-                        required
-                      />
-                    </div>
-
-                    <div className="form-control">
-                      <label className="label">
-                        <span className="label-text">Confirm New PIN</span>
-                      </label>
-                      <input
-                        type="password"
-                        name="confirmPin"
-                        value={resetData.confirmPin}
-                        onChange={handleResetChange}
-                        className="input input-bordered"
-                        placeholder="0000"
-                        maxLength={4}
-                        pattern="[0-9]{4}"
-                        required
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="btn btn-primary w-full"
-                    >
-                      Reset PIN
-                    </button>
-                  </form>
-                </>
-              )}
-            </div>
+                </form>
+              </>
+            )}
           </div>
         </div>
       </main>
@@ -317,4 +315,3 @@ export default function LoginPage() {
     </>
   );
 }
-

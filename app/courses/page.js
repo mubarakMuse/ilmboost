@@ -1,121 +1,111 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
-import { getSEOTags } from "@/libs/seo";
-import { getAllCoursesMetadata, getCourseImageUrl } from "./courseUtils";
+import { getAllCoursesMetadata, getCourseImageUrl, isPremiumCourse } from "./courseUtils";
 import CourseImage from "./components/CourseImage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import config from "@/config";
 
-export const metadata = getSEOTags({
-  title: `Courses - ${config.appName}`,
-  description: "Structured, online Islamic education for the modern family. Learn Islamic studies from qualified teachers in a flexible, accessible format.",
-  keywords: ["Islamic studies", "online Islamic education", "Quran classes", "Islamic learning", "Muslim education", "online religious education"],
-  canonicalUrlRelative: "/courses",
-});
-
-const IslamicStudies = () => {
+const CoursesPage = () => {
   const courses = getAllCoursesMetadata();
 
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-base-100">
-        <div className="max-w-4xl mx-auto px-6 py-12">
-          <div className="mb-10">
-            <h1 className="text-4xl font-bold mb-3 text-base-content">
-              Online Islamic Studies
+      <main className="min-h-screen bg-[#FAFAFA]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+          {/* Header Section */}
+          <div className="mb-12 sm:mb-16 text-center">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-black mb-4 leading-tight">
+              All Courses
             </h1>
-            <p className="text-lg text-base-content/70">
-              Structured, online Islamic education for the modern family.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Discover comprehensive Islamic studies courses designed for every learner
             </p>
           </div>
 
-          <div className="mb-12">
-            <div className="text-base leading-relaxed space-y-4 text-base-content/80">
-              <p>
-                We provide structured, comprehensive Islamic education online. Our curriculum is designed for modern families who want authentic Islamic knowledge that fits into their busy lives.
-              </p>
-              <p>
-                Learn from qualified teachers, study at your own pace, and connect with a community of learners committed to understanding their faith.
-              </p>
-            </div>
-          </div>
-
-          <div className="mb-12">
-            <h2 className="text-2xl font-semibold mb-6 text-base-content">Available Courses</h2>
-            <div className="space-y-6">
-              {courses.map((course) => {
+          {/* Courses Grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {courses.length > 0 ? (
+              courses.map((course) => {
                 const isAvailable = course.status === "Available Now";
-                const CourseCard = (
-                  <div key={course.courseID} className={`card card-border transition-colors ${
-                    isAvailable 
-                      ? 'hover:shadow-lg' 
-                      : 'opacity-75'
-                  }`}>
-                    <div className="card-body">
-                      <div className="flex gap-4">
-                        {course.courseImage && (
-                          <div className="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border border-base-300 bg-base-200">
-                            <CourseImage
-                              src={getCourseImageUrl(course.courseImage)}
-                              alt={course.courseImageAlt || course.courseTitle}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        )}
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between gap-2 mb-2">
-                            <h3 className={`text-lg font-semibold ${
-                              isAvailable ? 'text-base-content' : 'text-base-content/60'
-                            }`}>
-                              {course.courseTitle}
-                            </h3>
-                            {!isAvailable && (
-                              <span className="badge badge-warning">
-                                Coming Soon
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-sm leading-relaxed text-base-content/70 mb-3">
-                            {course.courseDescription}
-                          </p>
-                          {isAvailable ? (
-                            <Link 
-                              href={`/courses/${course.courseSlug}`}
-                              className="link link-primary text-sm font-medium"
-                            >
-                              View Course →
-                            </Link>
-                          ) : (
-                            <span className="text-sm text-base-content/40">
-                              Coming Soon
-                            </span>
-                          )}
-                        </div>
+                const isPremium = isPremiumCourse(course);
+                
+                return (
+                  <Link
+                    key={course.courseID}
+                    href={isAvailable ? `/courses/${course.courseSlug}` : '#'}
+                    className={`group bg-white border-2 rounded-xl overflow-hidden transition-all ${
+                      isAvailable 
+                        ? 'border-gray-300 hover:border-black hover:shadow-lg cursor-pointer' 
+                        : 'border-gray-200 opacity-60 cursor-not-allowed'
+                    }`}
+                  >
+                    {/* Course Image */}
+                    {course.courseImage && (
+                      <div className="w-full h-48 bg-gray-200 overflow-hidden">
+                        <CourseImage
+                          src={getCourseImageUrl(course.courseImage)}
+                          alt={course.courseImageAlt || course.courseTitle}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
                       </div>
+                    )}
+                    
+                    {/* Course Content */}
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 mb-3 flex-wrap">
+                        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          {course.type || 'Islamic Studies'}
+                        </span>
+                        {isPremium ? (
+                          <span className="px-2.5 py-1 text-xs font-semibold bg-[#F5E6D3] text-black rounded-md">
+                            Premium
+                          </span>
+                        ) : (
+                          <span className="px-2.5 py-1 text-xs font-semibold bg-gray-200 text-gray-700 rounded-md">
+                            Free
+                          </span>
+                        )}
+                        {!isAvailable && (
+                          <span className="text-xs text-gray-400 font-medium">Coming Soon</span>
+                        )}
+                      </div>
+                      
+                      <h3 className="text-xl font-semibold text-black mb-2 line-clamp-2 group-hover:text-gray-700 transition-colors">
+                        {course.courseTitle}
+                      </h3>
+                      
+                      {course.courseDescription && (
+                        <p className="text-sm text-gray-600 line-clamp-2 mb-4">
+                          {course.courseDescription}
+                        </p>
+                      )}
+
+                      {course.estimatedTime && (
+                        <p className="text-xs text-gray-500 mb-4">
+                          ⏱ {course.estimatedTime}
+                        </p>
+                      )}
+
+                      {isAvailable && (
+                        <div className="flex items-center text-black font-medium text-sm group-hover:gap-2 transition-all">
+                          <span>View Course</span>
+                          <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                );
-
-                return isAvailable ? (
-                  <Link key={course.courseID} href={`/courses/${course.courseSlug}`} className="block">
-                    {CourseCard}
                   </Link>
-                ) : (
-                  CourseCard
                 );
-              })}
-            </div>
-          </div>
-
-          <div className="pt-8 border-t border-base-300">
-            <a 
-              href="mailto:Mubarak014@gmail.com?subject=Islamic Studies Inquiry" 
-              className="btn btn-primary"
-            >
-              Contact Us
-            </a>
+              })
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-500">No courses available at the moment</p>
+              </div>
+            )}
           </div>
         </div>
       </main>
@@ -124,4 +114,4 @@ const IslamicStudies = () => {
   );
 };
 
-export default IslamicStudies;
+export default CoursesPage;

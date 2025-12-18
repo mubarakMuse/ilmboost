@@ -50,15 +50,14 @@ CREATE POLICY "Service role can manage license_users" ON public.license_users
   FOR ALL USING (true);
 
 -- Function to generate license key from user info
--- Format: FirstInitial + LastInitial + Last4DigitsOfPhone + YearOfBirth
--- Example: MF12341990 (M=First initial, F=Last initial, 1234=phone last 4, 1990=birth year)
-CREATE OR REPLACE FUNCTION generate_license_key(user_first_name TEXT, user_last_name TEXT, user_phone TEXT, user_dob_year INTEGER)
+-- Format: FirstInitial + LastInitial + YearOfBirth
+-- Example: MF1990 (M=First initial, F=Last initial, 1990=birth year)
+CREATE OR REPLACE FUNCTION generate_license_key(user_first_name TEXT, user_last_name TEXT, user_dob_year INTEGER)
 RETURNS TEXT AS $$
 DECLARE
   new_key TEXT;
   first_initial TEXT;
   last_initial TEXT;
-  phone_last4 TEXT;
   birth_year TEXT;
   key_exists BOOLEAN;
 BEGIN
@@ -70,13 +69,6 @@ BEGIN
   last_initial := UPPER(SUBSTRING(COALESCE(user_last_name, '') FROM 1 FOR 1));
   IF last_initial = '' THEN last_initial := 'X'; END IF;
   
-  -- Get last 4 digits of phone (remove all non-digits first)
-  phone_last4 := SUBSTRING(REGEXP_REPLACE(COALESCE(user_phone, ''), '[^0-9]', '', 'g') FROM GREATEST(1, LENGTH(REGEXP_REPLACE(COALESCE(user_phone, ''), '[^0-9]', '', 'g')) - 3));
-  IF phone_last4 = '' OR LENGTH(phone_last4) < 4 THEN 
-    phone_last4 := LPAD(COALESCE(phone_last4, ''), 4, '0');
-  END IF;
-  phone_last4 := RIGHT(phone_last4, 4);
-  
   -- Get birth year (4 digits)
   birth_year := COALESCE(user_dob_year::TEXT, '0000');
   IF LENGTH(birth_year) < 4 THEN
@@ -85,7 +77,7 @@ BEGIN
   birth_year := RIGHT(birth_year, 4);
   
   -- Generate base key
-  new_key := first_initial || last_initial || phone_last4 || birth_year;
+  new_key := first_initial || last_initial || birth_year;
   
   -- Check if key already exists, if so add a number suffix
   SELECT EXISTS(SELECT 1 FROM public.licenses WHERE license_key = new_key) INTO key_exists;
@@ -111,7 +103,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Note: License key generation is now handled in the application code
--- using user information (first name, last name, phone, birth year)
+-- using user information (first name, last name, birth year)
 -- The trigger is removed as we'll generate keys in the webhook/API
 
 -- Trigger for updated_at
